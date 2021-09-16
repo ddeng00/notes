@@ -1,0 +1,249 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{Efficient Algorithms and Intractable Problems}
+\author{Daniel Deng}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Complexity Analysis}
+
+\begin{definition}[Asymptotic Notations]
+\begin{align*}
+f = O(g) \approx f(n) \leq c\cdot g(n) \\
+f = o(g) \approx f(n) < c\cdot g(n) \\
+f = \Omega(g) \approx f(n) \geq c\cdot g(n) \\
+f = \omega(g) \approx f(n) > c\cdot g(n) \\
+f = \Theta(g) \approx f(n) = c\cdot g(n) \\
+\end{align*}
+\end{definition}
+
+\begin{theorem}[Master Theorem]
+If $T(n)=aT([n/b])+O(n^d)$ for some constants $a>0$, $b>1$, and $d\geq 0$, then
+\begin{equation*}
+T(n)=\begin{cases}
+\Theta(n^d) &a<b^d \\
+\Theta(n^d \log n) & a = b^d \\
+\Theta(n^{\log_b a}) & a > b^d \\
+\end{cases}
+\end{equation*}
+\end{theorem}
+
+\section{Polynomial Interpolation}
+Given a degree $n$ polynomial $A(x)=a_0 + a_1 x + a_2 x^2+\cdots + a_{n} x^n$, the relationship between its values and coefficients can be represented by
+$$
+\begin{bmatrix}
+A(x_0) \\ A(x_1) \\ \vdots \\ A(x_{n-1}) \\
+\end{bmatrix} = \begin{bmatrix}
+1 & x_0 & x_0^2 & \cdots & x_0^{n-1} \\
+1 & x_1 & x_1^2 & \cdots & x_1^{n-1} \\
+&& \vdots \\
+1 & x_{n-1} & x_{n-1}^2 & \cdots & x_{n-1}^{n-1} \\
+\end{bmatrix} \begin{bmatrix}
+a_0 \\ a_1 \\ \vdots \\ a_{n-1} \\
+\end{bmatrix} \quad (\mbox{evaluation})
+$$
+where the matrix $M$ is a \textit{Vandermonde} matrix.
+
+\subsection{Fast Fourier Transform (FFT)}
+\begin{definition}[Discrete Fourier Transform Matrix]
+For polynomials of degree $<n$ ($n$ is even; polynomials can be 0-padded), the Discrete Fourier Transform can be represented by the matrix
+$$M_n (\omega) = \begin{bmatrix}
+1 & 1 & 1 & \cdots & 1 \\
+1 & \omega & \omega^2 & \cdots & \omega^{n-1} \\
+&&\vdots \\
+1 & \omega^j & \omega^{2j} & \cdots & \omega^{(n-1)j} \\
+&&\vdots \\
+1 & \omega^{n-1} & \omega^{2(n-1)} & \cdots & \omega^{(n-1)(n-1)} \\
+\end{bmatrix}$$ \\
+where $\omega = e^{2\pi i / n}$ is the $n$th root of unity.
+\end{definition}
+
+\begin{remark}
+$M_n (\omega)$ is an unitary matrix whose columns forms the \textit{Fourier Basis}.
+\end{remark}
+
+\begin{lemma}
+$M_n^{-1} (\omega) = \frac{1}{n} \overline{M_n (\omega)} = \frac{1}{n} M_n (\omega^{-1})$
+\end{lemma}
+
+\begin{lemma} 
+$A(x)=A_{even}(x^2)+xA_{odd}(x^2)$ 
+\end{lemma}
+
+\begin{remark}
+If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_e(x^2)$ and $A_o(x^2)$ will only need to evaluate half the amount of points ($T(n) = 2T(n/2) + O(n) = O(n \log n)$).
+\end{remark}
+
+\begin{algorithm}[ht]
+    \caption{Fast Fourier transform}
+	\SetKwFunction{FFT}{FFT}  
+	\SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+	\KwIn{A coefficient vector, $\vec{a}=\langle a_0,\dots,a_{n-1} \rangle$ and the $n$th root of unity, $\omega$.}
+	\KwOut{$M_n(\omega)\vec{a}$}
+    
+    \Fn{\FFT{$\vec{a}$, $\omega$}}{
+    \eIf{$\omega = 1$}{
+    	return $\vec{a}$
+    } {
+    	$\langle A_e(0),\dots,A_{e}(n/2-1)\rangle \gets \mbox{FFT}(\langle a_0, a_2,\dots,a_{n-2}\rangle,\omega^2)$ \\
+    	$\langle A_o(0),\dots,A_{o}(n/2-1)\rangle \gets \mbox{FFT}(\langle a_1, a_3,\dots,a_{n-1}\rangle,\omega^2)$ \\
+    	\For {$j:=0$ to $n/2-1$}{
+    		$A(j) \gets A_{e}(j) + \omega^j A_{o}(j)$ \\
+    		$A(j+n/2) \gets A_{e}(j) - \omega^j A_o(j)$ \\
+    	}
+    }
+    \Return {$\langle A(0), \dots, A(n-1)\rangle$}}
+\end{algorithm}
+
+\clearpage
+\subsection{Polynomial Multiplication}
+\begin{algorithm}[ht]
+    \caption{Fast Polynomial Multiplication}
+    
+    \DontPrintSemicolon
+    \KwIn{Coefficient vectors, $a$ and $b$, and the $n$th root of unity, $\omega$.}
+    \KwOut{The coefficient vector of $A(x)B(x)$}
+    
+    $\hat{\vec{a}} \gets M_n(\omega)\vec{a}$ \quad \mbox{(FFT)}\\
+    $\hat{\vec{b}} \gets M_n(\omega)\vec{b}$\\
+    \For {$i=0$ to $n-1$}{$\hat{c}_i\gets \hat{a}_i\hat{b}_i$}
+    \Return {$\frac{1}{n} M_n(\omega^{-1})\hat{\vec{c}}$} \quad \mbox{(inverse matrix)}
+\end{algorithm}
+
+\subsection{Cross-Correlation}
+\begin{definition}[Cross-Correlation]
+$corr(\vec{x},\vec{y})[k] = \sum x_i y_{i-k}$, which measures similarity.
+\end{definition}
+
+\begin{algorithm}
+    \caption{Cross-Correlation}
+ 
+    \DontPrintSemicolon
+    \KwIn{Two signal vectors, $\vec{x}$ and $\vec{y}$.}
+    \KwOut{$corr(\vec{x},\vec{y})$}
+    
+    $X(t) \gets x_{m-1} + x_{m-2}t + \dots + x_0 t^{m-1}$ \\
+    $Y(t) \gets y_0 + y_1 t + \dots + y_{n-1} t^{n-1}$ \\
+    $Q(t) \gets X(t)Y(t)$ \quad \mbox{(Fast Polynomial Multiplication)}\\
+    \Return {$\vec{q}$}
+\end{algorithm}
+
+\section{Graphs}
+\begin{definition}[Graph] A graph is a pair $G=(V,E)$, typically represented by an adjacency matrix or an adjacency list.
+\end{definition}
+
+\begin{table}[ht]
+\centering
+\caption{Graph representations.}
+\begin{tabular}[t]{lcccc}
+\hline
+& Space & Connectivity & getNeighbors($u$) & DFS Runtime\\
+\hline
+Adjacency Matrix & $\Theta(|V|^2)$ & $O(1)$ & $\Theta(|V|)$ & $\Theta(|V|^2)$\\
+Adjacency List & $\Theta(|V|+|E|)$ & $\Theta(degree(u))$ & $\Theta(degree(u))$ & $\Theta(|V|+|E|)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Depth-First Search}
+
+\begin{algorithm}[ht]
+    \caption{Depth-first search}
+    \SetKwFunction{DFS}{DFS}
+    \SetKwFunction{EXPLORE}{EXPLORE}
+    \SetKwProg{Fn}{Function}{:}{}  
+ 
+    \DontPrintSemicolon
+    
+	\KwIn{$V, E$ of directed graph $G$.}   
+    
+	\Fn{\DFS{$V,E$}}{
+		$n \gets |V|$ \\
+		$clk \gets 1$ \\
+    	visited $\gets$ boolean[$n$] \\
+    	preorder, postorder = int[$n$] \\
+    	\For {$v \in V$} {
+    		\If {!visited[v]} {
+    			\EXPLORE{v}{}
+    		}
+    	}
+	}
+	\Fn{\EXPLORE{$v$}} {
+		visited[v] $\gets$ True \\
+		preorder[v] $\gets$ clk++ \\
+		\For {$(v,w)\in E$}{
+			\If{!visited[w]} {
+				\EXPLORE{w}
+			}		
+		}
+		postorder[v] $\gets$ clk++ \\
+	}
+\end{algorithm}
+
+\begin{remark}
+Preorder-postorder intervals are either nested or disjoint.
+\end{remark}
+
+\begin{definition}[Back Edge]
+A back edge is an non-tree edge that goes from a descendant vertex to an ancestor vertex.
+\end{definition}
+
+\begin{remark}
+postorder[$u$] $\leq$ postorder[$v$] \textit{iff} $(u,v)$ is a back edge.
+\end{remark}
+
+\begin{remark}
+$G$ is a cycle \textit{iff} it contains a back edge.
+\end{remark}
+
+\subsubsection{Applications of DFS}
+
+\begin{algorithm}
+    \caption{Topological sort.}
+    
+    \DontPrintSemicolon
+    \KwIn{A directed cyclic graph $G$.}
+    \KwOut{An ordered list of $V$ such that $u_i$ comes before $v_i$ for all $(u_i, v_i)\in E$ (i.e., ordered by decreasing dependency).}
+    
+    $post \gets$ DFS-visited vertexes ordered by postorder visits \\
+    \Return{reverse(post)}
+\end{algorithm}
+
+\begin{definition}[Strongly Connected Component]
+A SCC is a maximal partition of a directed graph in which every vertex is reachable from every other vertex.
+\end{definition}
+
+\begin{align*}
+u \mbox{ is in sink SCC of graph }G &\Leftrightarrow u \mbox{ is in source SCC of reverse graph }G \\ &\Leftrightarrow 
+\end{align*}
+
+u is in source SCC if highest postorder number.
+
+\end{document}
+
+

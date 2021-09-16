@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+\title{Introduction to Artificial Intelligence}
+\author{Daniel Deng}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Search Problems}
+\begin{definition}[Reflex Agent]
+A reflex agent chooses actions based on its current perception of the world.
+\end{definition}
+
+\begin{definition}[Planning Agent]
+A planning agent chooses actions based on hypothesized consequences of actions.
+\end{definition}
+
+\begin{definition}[Search Problem]
+A search problem consists of a state space, a successor function, a start state, and a goal test.
+\end{definition}
+
+\section{Search Algorithms}
+
+\subsection{Heuristics}
+\begin{definition}[Heuristic] 
+A heuristic $h(n)$ is a function that estimates the distance from state $n$ to the goal state for a particular search problem. It is often solutions of relaxed problems.
+\end{definition}
+
+\begin{definition}[Admissibility] 
+A heuristic is admissible, or optimistic, if $0 \leq h(n) \leq h^*(n)$ where $h^*$ is the true cost to goal state.
+\end{definition}
+
+\begin{definition}[Consistency]
+A heuristic is consistent if $h(n) - h(n+1) \leq c(n, n+1)$ where $c$ is the cost between states $n$ and $n+1$.
+\end{definition}
+
+\begin{remark}
+Consistency necessarily implies admissibility.
+\end{remark}
+
+\clearpage
+\begin{table}[ht]
+\centering
+\begin{adjustbox}{width={\textwidth}}
+\begin{threeparttable}
+\caption{Search algorithms.}
+\begin{tabular}[t]{lccccc}
+\hline
+& Fringe & Complete & Optimal & Time & Space \\ 
+\hline
+Depth-First Search & Stack & \textit{iff} no cycle & No & $O(b^m)$ & $O(bm)$ \\ 
+Breadth-First Search & Queue & Yes & \textit{iff} uniform cost & $O(b^s)$\tnote{1} & $O(b^s)$\tnote{1} \\ 
+Uniform Cost Search & PQ ($g(n)$)\tnote{2} & \textit{iff} positive cost & Yes & $O(b^{c^*/\epsilon})$\tnote{3} & $O(b^{c^*/\epsilon})$\tnote{3} \\ 
+Greedy Search & PQ ($h(n)$)& - & No & - & - \\ 
+$A^*$ Tree Search & PQ ($h(n)+g(n)$)& - & \textit{iff} $h(n)$ admissible & - & - \\ 
+$A^*$ Graph Search\tnote{4} & PQ ($h(n)+g(n)$) & - & \textit{iff} $h(n)$ consistent & - & - \\ 
+\hline
+\end{tabular}
+\quad
+\begin{tablenotes}\footnotesize
+\item[1] $s$ = depth of solution.
+\item[2] $g(n)$ = cumulative path cost.
+\item[3] $c^*/\epsilon$ = effective solution depth ($c^*$ = cost of the cheapest solution; $\epsilon$ = minimum cost of cost-contour arcs).
+\item[4] Compared to tree search, graph search keeps a closed set of expanded states to check against to prevent duplicate expansions.
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\end{table}
+
+\begin{remark}
+Implementation of search algorithms differ only in fringe strategies.
+\end{remark}
+
+\section{Constrained Satisfaction Problems}
+\begin{definition}[Constrained Satisfaction Problems]
+Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification problem} defined by variable $X_0, \dots, X_n$ with values from a domain $D$ that satisfies a set of constrains.
+\end{definition}
+
+\end{document}
+
+
