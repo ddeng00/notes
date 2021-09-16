@@ -1,0 +1,201 @@
+\documentclass[11pt]{article}
+
+\usepackage{mathtools,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{Multivariable Calculus}
+\author{Daniel Deng}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Single Variable Calculus}
+\begin{theorem}[Fundamental Theorem of Calculus]
+\begin{align}
+\int_a^b f'(x)\, dx = f(b) - f(a) \\
+\frac{d}{dx} \int_a^x f(t)\, dt = f(x)
+\end{align}
+\end{theorem}
+
+\begin{definition}[Length of Curve] \begin{equation}
+L(a,b) = \int_a^b \sqrt{1+(f'(x))^2} \, dx
+\end{equation}
+\end{definition}
+
+\begin{definition}[Area of Surface of Revolution] \begin{equation}
+A(a,b) = \int_a^b 2\pi f(x) \sqrt{1+(f'(x))^2} \, dx
+\end{equation}
+\end{definition}
+
+\subsection{Integration/Derivation Techniques}
+\begin{definition}[Chain Rule]\begin{equation}
+\frac{d}{dx}f(g(x))=f'(g(x))g'(x)
+\end{equation}
+\end{definition}
+
+\begin{definition}[Product Rule]
+\begin{equation}
+\frac{d}{dx}(f(x)g(x))=f(x)g'(x)+f'(x)g(x)
+\end{equation}
+\end{definition}
+
+\begin{definition}[Quotient Rule]
+\begin{equation}
+\frac{d}{dx}(\frac{f(x)}{f(x)})=\frac{f'(x)g(x)-f(x)g'(x)}{g^2(x)}
+\end{equation}
+\end{definition}
+
+\begin{definition}[Integration by Parts]
+\begin{equation}
+\int u\, dv = uv - \int v \, du
+\end{equation}
+\end{definition}
+
+
+\subsection{Trigonometry}
+\begin{definition}[Trigonometric Identities]
+\begin{align}
+\begin{cases}
+\sin^2 \theta + \cos^2 \theta = 1 \\
+\sec^2\theta = \tan^2\theta+1 \\
+\csc^2\theta = \cot^2\theta+1
+\end{cases} \\
+\begin{dcases}
+\sin(2\theta)&=2\sin\theta\cos\theta \\
+\cos(2\theta)&=\cos^2\theta-\sin^2\theta\\
+&=2\cos^2\theta-1\\
+&=1-2\sin^2\theta \\
+\tan(2\theta)&=\frac{2\tan\theta}{1-\tan^2\theta}
+\end{dcases} \\
+\begin{dcases}
+\sin^2\theta&=\tfrac{1}{2}(1-\cos(2\theta))\\
+\cos^2\theta&=\tfrac{1}{2}(1+\cos(2\theta))\\
+\tan^2\theta&=\frac{1-\cos(2\theta)}{1+\cos(2\theta)}
+\end{dcases} \\
+\begin{cases}
+\sin\alpha\sin\beta &= \tfrac{1}{2}(\cos(\alpha - \beta)-\cos(\alpha+\beta)) \\
+\cos\alpha\cos\beta&=\tfrac{1}{2}(\cos(\alpha - \beta)+\cos(\alpha+\beta)) \\
+\sin\alpha\cos\beta&=\tfrac{1}{2}(\sin(\alpha + \beta)+\sin(\alpha-\beta))
+\end{cases} \\
+\begin{cases}
+\sin(\alpha\pm\beta)&=\sin\alpha\cos\beta\pm\cos\alpha\sin\beta \\
+\cos(\alpha\pm\beta)&=\cos\alpha\cos\beta\mp\sin\alpha\sin\beta \\
+\end{cases}
+\end{align}
+\end{definition}
+
+\begin{definition}[Trigonometric Integration/Derivation]
+\begin{align}
+\begin{cases}
+\frac{d}{dx} \sin x &= \cos x \\
+\frac{d}{dx} \cos x &= -\sin x \\
+\frac{d}{dx} \tan x &= \sec^2 x \\
+\frac{d}{dx} \csc x &= -\cot x \csc x \\
+\frac{d}{dx} \sec x &= \tan x \sec x \\
+\frac{d}{dx} \cot x &= -\csc^2 x
+\end{cases} \\
+\int \tan x \, dx = \ln |\sec x| + c
+\end{align}
+\end{definition}
+\subsection{Conic Sections}
+\begin{definition}[Circle] \begin{equation}
+(x-h)^2 + (y-k)^2 = r^2
+\end{equation}
+\end{definition}
+
+\begin{definition}[Ellipse] \begin{equation}
+\frac{(x-h)^2}{a^2} + \frac{(y-k)^2}{b^2} = 1
+\end{equation}
+\end{definition}
+
+\begin{definition}[Parabola] \begin{equation}
+\begin{dcases}
+(x-h)^2 = 4p(y-k)^2 \\
+(y-k)^2 = 4p(x-h)^2
+\end{dcases}
+\end{equation}
+\end{definition}
+
+\begin{definition}[Hyperbola] \begin{equation}
+\begin{dcases}
+\frac{(x-h)^2}{a^2} - \frac{(y-k)^2}{b^2} = 1 \\
+\frac{(y-k)^2}{b^2} - \frac{(x-h)^2}{a^2} = 1
+\end{dcases}
+\end{equation}
+\end{definition}
+
+\subsection{Parametrized Curve}
+Let $x=f(t), y=g(t)$ for $\alpha \leq t \leq \beta$.
+\begin{definition}[Derivation of Parametrized Curve]
+\begin{align}
+\frac{dy}{dx} = \frac{\frac{d}{dt}y}{\frac{d}{dt}x}=\frac{g'(t)}{f'(t)} \\
+\frac{d^2y}{dx^2}=\frac{\frac{d}{dt}\frac{dy}{dx}}{\frac{d}{dt}x}=\frac{g''(t)f'(t)-g'(t)f''(t)}{(f'(t))^3}
+\end{align}
+\end{definition}
+
+\begin{definition}[Area under Parametrized Curve] Define positive curve as pointing right, or counterclockwise. Then
+\begin{equation}
+A=\pm \int_\alpha^\beta y \, dx =\pm \int_\alpha^\beta g(t)f'(t) \, dt
+\end{equation}
+\end{definition}
+
+\begin{definition}[Length of Parametrized Curve]\begin{equation}
+L=\int_\alpha^\beta \sqrt{(x'(t))^2+(y'(t))^2} \, dt = \int_\alpha^\beta \, ds
+\end{equation}
+\end{definition}
+
+\begin{definition}[Area of Surface of Revolution for Parametrized Curve] \begin{equation}
+A=\int_\alpha^\beta 2\pi y(t)\, ds
+\end{equation}
+\end{definition}
+
+\subsection{Polar Coordinates}
+$r=f(\theta), \quad\begin{cases}
+x=r\cos\theta \\ y=r\sin \theta
+\end{cases} \implies \begin{cases}
+x^2+y^2 = r^2 \\ \tan\theta = \frac{y}{x}
+\end{cases}$
+
+\begin{definition}[Area in Polar Coordinates]
+\begin{equation}
+A=\frac{1}{2}\int_\alpha^\beta f^2(\theta)\, d\theta
+\end{equation}
+\end{definition}
+
+\begin{definition}[Length in Polar Coordinates]
+\begin{equation}
+L = \int_\alpha^\beta \sqrt{r^2+(r')^2} \, d\theta
+\end{equation}
+\end{definition}
+
+\section{Multivariable Calculus}
+\subsection{Dot Product}
+\begin{definition}[Dot Product]
+\begin{equation}
+\vec{v}\cdot \vec{u}=\sum v_i u_i = \|\vec{v}\| \|\vec{u}\| \cos \theta
+\end{equation}
+\end{definition}
+
+
+\end{document}
+
+
