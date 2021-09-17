@@ -97,6 +97,15 @@ Implementation of search algorithms differ only in fringe strategies.
 Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification problem} defined by variable $X_0, \dots, X_n$ with values from a domain $D$ that satisfies a set of constrains.
 \end{definition}
 
+\subsection{Ordering}
+\begin{definition}[Minimum Remaining Values]
+The MRV policy chooses an unassigned variable that has the fewest valid remaining values in order to induce backtracking earlier and reduce potential node expansions.
+\end{definition}
+
+\begin{definition}[Least Constraining Value]
+The LCV policy chooses a value assignment that violates the least amount of constraints, which requires additional computation such as running arc consistency test on each value.
+\end{definition}
+
 \end{document}
 
 
