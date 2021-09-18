@@ -244,6 +244,35 @@ u \mbox{ is in sink SCC of graph }G &\Leftrightarrow u \mbox{ is in source SCC o
 
 u is in source SCC if highest postorder number.
 
+\subsection{Single-Source Shortest Paths (SSSPs)}
+\begin{algorithm}
+    \caption{Single-Source Shortest Path}    
+    
+	\SetKwFunction{BFS}{BFS} 
+	\SetKwFunction{Dijkstra}{Dijkstra} 
+	\SetKwFunction{BF}{Bellman-Ford}
+    \SetKwProg{Fn}{Function}{:}{}      
+    
+    \KwIn{A directed graph $G$ and a start vertex $S$.}
+    \KwOut{Two arrays $prev[|V|]$ (shortest-path predecessor) and $dist[|V|]$ (shortest-path distance).}
+    
+    \Fn{\BFS{$G,S$}}{
+	\tcc{Must have uniform edge weights. $O(|V|+|E|)$ runtime.}    
+    }
+    
+    \Fn{\Dijkstra($G, S$)}{
+    \tcc{Must have positive edge weights. $O(|V| \log |V| + |E|)$ runtime if implemented using fibonacci heap.}
+    }
+    
+    \Fn{\BF($G,S$)}{
+    \tcc{Can have aribitrary edge weights.}
+    }
+\end{algorithm}
+
+
+
+
+
 \end{document}
 
 
