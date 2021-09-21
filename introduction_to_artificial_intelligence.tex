@@ -97,7 +97,14 @@ Implementation of search algorithms differ only in fringe strategies.
 Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification problem} defined by variable $X_0, \dots, X_n$ with values from a domain $D$ that satisfies a set of constrains.
 \end{definition}
 
-\subsection{Ordering}
+\subsection{Backtracking Search}
+\subsubsection{Filtering}
+\begin{definition}[Arc Consistency]
+\begin{multline*}
+\text{Arc } X \to Y \text{ is consistent} \Leftrightarrow \\(\forall x \in D_x)(\exists y \in D_y)(y\text{ can be assigned to \textit{Y} without violating a constraint.})
+\end{multline*}
+\end{definition}
+\subsubsection{Ordering}
 \begin{definition}[Minimum Remaining Values]
 The MRV policy chooses an unassigned variable that has the fewest valid remaining values in order to induce backtracking earlier and reduce potential node expansions.
 \end{definition}
@@ -105,6 +112,56 @@ The MRV policy chooses an unassigned variable that has the fewest valid remainin
 \begin{definition}[Least Constraining Value]
 The LCV policy chooses a value assignment that violates the least amount of constraints, which requires additional computation such as running arc consistency test on each value.
 \end{definition}
+
+\subsubsection{Structure}
+Given a tree-structured CSP, represent it as a directed acyclic graph. Enforcing arc consistency in reverse topological order then assigning in topological order ensures a runtime of $O(nd^2)$  (as opposed to $O(d^n)$ in the general case). \\
+TODO: nearly tree-like CSPs and tree decomposition.
+\section{Local Search}
+Improve a single option until no further improvements can be made.
+\begin{remark}
+Generally, local search is faster and more memory efficient at the expense of completeness and optimality.
+\end{remark}
+\subsection{Iterative Algorithm for CSP/Hill Climbing}
+Starting with a "complete" state, randomly select any conflicted variables and reassign values using min-conflicts heuristics.
+\begin{remark}
+Efficiency of the algorithm depends on $R=\tfrac{\text{number of constraints}}{\text{number of variables}}$; computation time is approximately constant time except when $R$ approaches the \textit{critical ratio}.
+\end{remark}
+
+\subsection{Simulated Annealing}
+\begin{algorithm}
+    \caption{Simulated annealing.}
+    
+    \DontPrintSemicolon
+    \KwIn{A problem $P$ and a schedule/mapping from time to "temperature" $T$.}
+    \KwOut{A solution state.}
+    
+    \tcc{Escape local maxima by allowing downhill movement based on a "temperature"-dependent probabilistic function.}
+    
+    $current \gets$ initial state of $P$ \\
+    \For{$t \gets 1$ to $\infty$}{
+		$temp \gets T[t]$ \\
+		\If{$temp = 0$}{\Return{$current$}}
+		\Else{
+			$next \gets$ a randomly selected successor of $current$ \\
+			$\Delta \gets$ \textsc{Value}[$next$] - \textsc{Value}[$current$] \\
+			\If{$\Delta > 0$} {
+				$current \gets next$			
+			} \Else{
+				$currnet \gets next$ with probability $e^{\frac{\Delta}{temp}}$
+			}
+		}
+    }
+\end{algorithm}
+
+\section{Genetic Algorithms}
+Keep best $N$ hypotheses at each step (selection) based on a fitness function and have pairwise crossover operations (and, optionally, mutation operations) to generate a new set of hypotheses.
+
+
+\section{General-Sum Game}
+
+
+
+
 
 \end{document}
 
