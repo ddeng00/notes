@@ -92,19 +92,88 @@ $A^*$ Graph Search\tnote{4} & PQ ($h(n)+g(n)$) & - & \textit{iff} $h(n)$ consist
 Implementation of search algorithms differ only in fringe strategies.
 \end{remark}
 
+\newpage
 \section{Constrained Satisfaction Problems}
 \begin{definition}[Constrained Satisfaction Problems]
 Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification problem} defined by variable $X_0, \dots, X_n$ with values from a domain $D$ that satisfies a set of constrains.
 \end{definition}
 
-\subsection{Backtracking Search}
-\subsubsection{Filtering}
+\begin{algorithm}[ht]
+    \caption{Backtracking search.}
+    \SetKwProg{Fn}{Function}{:}{} 
+    \SetKwFunction{BS}{BS}
+    \SetKwFunction{EX}{EXPLORE}   
+    
+    \DontPrintSemicolon
+    \KwIn{A constraint satisfaction problem $P$.}
+    \KwOut{A complete assignment $A$.}
+    
+    \Fn{\BS{$P$}}{
+		\Return{\EX($P$, $\{\}$)}
+    }
+    
+    \Fn{\EX{$P$, $A$}} {
+    	\If{$A$ is complete} {
+    		\Return{$A$}
+    	}
+    	$unassigned \gets$ an unassigned \textsc{Variable}($P$) \\
+    	\ForEach{$value \in$ \textsc{Domain}($unassigned$)} {
+    		\If{$value$ is consistent with all \textsc{Constraint}($P$)} {
+    			add $\{unassigned \gets value\}$ to $A$\\
+    			$attempt \gets$ \EX{$P$, $A$} \\
+    			\If{$attemp$ is \textsc{Failure}}{
+    				remove $\{unassigned \gets value\}$ from $A$\\
+    			} \Else {
+    				\Return{$attempt$}
+    			}
+    		}
+    	}
+    	\Return{\textsc{Failure}}
+    }
+\end{algorithm}
+
+\newpage
+\subsection{Filtering}
 \begin{definition}[Arc Consistency]
 \begin{multline*}
 \text{Arc } X \to Y \text{ is consistent} \Leftrightarrow \\(\forall x \in D_x)(\exists y \in D_y)(y\text{ can be assigned to \textit{Y} without violating a constraint.})
 \end{multline*}
 \end{definition}
-\subsubsection{Ordering}
+
+\begin{algorithm}[ht]
+    \caption{Arc consistency filtering.}
+    \SetKwProg{Fn}{Function}{:}{} 
+    \SetKwFunction{AC}{AC-3}
+    \SetKwFunction{F}{FILTER}   
+    
+    \DontPrintSemicolon
+    \KwIn{A constraint satisfaction problem $P$.}
+    
+    \Fn{\AC{$P$}}{
+		$Q \gets$ \textsc{Queue} \\
+		enqueue all arcs $\in P$\\
+		\While{$Q$ is not empty} {
+			$(X_i, X_j) \gets$ dequeue from $Q$ \\
+			\If{\F{$X_i, X_j$} is successful} {
+				\ForEach{$X_k \in$ \textsc{Neighbor}($X_i$)} {
+					enqueue $(X_k, X_i)$
+				}
+			}
+		}
+    }
+    \Fn{\F($tail, head$)}{
+    	$result \gets$ \textsc{False} \\
+    	\ForEach{$value \in$ \textsc{Domain}($tail$)}{
+    		\If{$value$ violates some constraint with all values in \textsc{Domain}($head$)} {
+    		delete $value$ from \textsc{Domain}($tail$)
+    		$result \gets$ \textsc{True}
+    		}
+    	}
+    	\Return{$reuslt$}
+    }
+\end{algorithm}
+
+\subsection{Ordering}
 \begin{definition}[Minimum Remaining Values]
 The MRV policy chooses an unassigned variable that has the fewest valid remaining values in order to induce backtracking earlier and reduce potential node expansions.
 \end{definition}
@@ -113,7 +182,7 @@ The MRV policy chooses an unassigned variable that has the fewest valid remainin
 The LCV policy chooses a value assignment that violates the least amount of constraints, which requires additional computation such as running arc consistency test on each value.
 \end{definition}
 
-\subsubsection{Structure}
+\subsection{Structure}
 Given a tree-structured CSP, represent it as a directed acyclic graph. Enforcing arc consistency in reverse topological order then assigning in topological order ensures a runtime of $O(nd^2)$  (as opposed to $O(d^n)$ in the general case). \\
 TODO: nearly tree-like CSPs and tree decomposition.
 \section{Local Search}
@@ -157,8 +226,41 @@ Efficiency of the algorithm depends on $R=\tfrac{\text{number of constraints}}{\
 Keep best $N$ hypotheses at each step (selection) based on a fitness function and have pairwise crossover operations (and, optionally, mutation operations) to generate a new set of hypotheses.
 
 
-\section{General-Sum Game}
-
+\section{Games}
+\subsection{Minimax}
+\begin{algorithm}
+    \caption{Minimax with alpha-beta pruning.}
+    \SetKwProg{Fn}{Function}{:}{} 
+    \SetKwFunction{V}{VALUE}
+    \SetKwFunction{Max}{MAX-VALUE}   
+    \SetKwFunction{Min}{MIN-VALUE}
+    \SetKwFunction{Exp}{EXP-VALUE}
+    
+    \DontPrintSemicolon
+    \KwIn{A game state $S$}
+    \KwOut{The root minimax value.}
+    
+    \tcc{initialize $\alpha \gets -\infty$ and $\beta \gets \infty$}
+    \Fn{\V{$S, \alpha, \beta$}}{
+		\If{$S$ is a terminal state} {
+			\Return{knwon temrinal value}
+		}
+		\If{the agent is maximizing} {
+			\Return{\Max{$S, \alpha, \beta$}}
+		} \If{the agent is minimizing} {
+			\Return{\Min($S, \alpha, \beta$)}
+		} \If{the agent is randomizing} {
+			\Return{\Exp{$S, \alpha, \beta$}}
+		}
+    }
+    
+    \Fn{\Max{$S, \alpha, \beta$}} {
+		$v \gets -\infty$ \\
+		\ForEach{successor $S'$ of $S$}{
+			$v \gets$ \textsc{Max}($v$, \V{$S'$})
+		}    
+    }
+\end{algorithm}
 
 
 
