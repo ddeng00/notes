@@ -218,7 +218,7 @@ postorder[$u$] $\leq$ postorder[$v$] \textit{iff} $(u,v)$ is a back edge.
 \end{remark}
 
 \begin{remark}
-$G$ is a cycle \textit{iff} it contains a back edge.
+$G$ contains a cycle \textit{iff} it contains a back edge.
 \end{remark}
 
 \subsubsection{Applications of DFS}
@@ -269,7 +269,23 @@ u is in source SCC if highest postorder number.
     }
 \end{algorithm}
 
-
+\subsection{Minimum Spanning Tree}
+\begin{algorithm}
+    \caption{MST algorithms.}
+    \SetKwFunction{P}{Prim}
+    \SetKwFunction{K}{Kruskal}
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    \KwIn{A graph $G$ and a starting vertex $v$.}
+    \KwOut{The minimum spanning tree $T$ of $G$.}
+    \tcc{Use the cut property.}
+    
+    \Fn{\P{$G,v$}}{
+    	$T \gets \emptyset$ \\
+    	$H \gets$ new Fibonacci heap 
+    }
+\end{algorithm}
 
 
 
