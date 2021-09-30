@@ -223,7 +223,7 @@ $G$ contains a cycle \textit{iff} it contains a back edge.
 
 \subsubsection{Applications of DFS}
 
-\begin{algorithm}
+\begin{algorithm}[ht]
     \caption{Topological sort.}
     
     \DontPrintSemicolon
@@ -237,15 +237,14 @@ $G$ contains a cycle \textit{iff} it contains a back edge.
 \begin{definition}[Strongly Connected Component]
 A SCC is a maximal partition of a directed graph in which every vertex is reachable from every other vertex.
 \end{definition}
-
 \begin{align*}
-u \mbox{ is in sink SCC of graph }G &\Leftrightarrow u \mbox{ is in source SCC of reverse graph }G \\ &\Leftrightarrow 
+u \text{ is in sink SCC of graph }G &\Leftrightarrow u \text{ is in source SCC of reverse graph }G \\ &\Leftrightarrow 
+\text{u is in source SCC if highest postorder number.}
 \end{align*}
 
-u is in source SCC if highest postorder number.
 
-\subsection{Single-Source Shortest Paths (SSSPs)}
-\begin{algorithm}
+\subsection{Single-Source Shortest Path}
+\begin{algorithm}[ht]
     \caption{Single-Source Shortest Path}    
     
 	\SetKwFunction{BFS}{BFS} 
@@ -261,7 +260,7 @@ u is in source SCC if highest postorder number.
     }
     
     \Fn{\Dijkstra($G, S$)}{
-    \tcc{Must have positive edge weights. $O(|V| \log |V| + |E|)$ runtime if implemented using fibonacci heap.}
+    \tcc{Must have positive edge weights. $O(|V| \log |V| + |E|)$ runtime if implemented using Fibonacci heap.}
     }
     
     \Fn{\BF($G,S$)}{
@@ -270,8 +269,8 @@ u is in source SCC if highest postorder number.
 \end{algorithm}
 
 \subsection{Minimum Spanning Tree}
-\begin{algorithm}
-    \caption{MST algorithms.}
+\begin{algorithm}[ht]
+    \caption{Minimum spanning tree.}
     \SetKwFunction{P}{Prim}
     \SetKwFunction{K}{Kruskal}
     \SetKwProg{Fn}{Function}{:}{}  
@@ -282,13 +281,18 @@ u is in source SCC if highest postorder number.
     \tcc{Use the cut property.}
     
     \Fn{\P{$G,v$}}{
-    	$T \gets \emptyset$ \\
-    	$H \gets$ new Fibonacci heap 
+    	\tcc{Sequentially adds the closest neightbor of the running set. $O(|E| + \log|V|)$ runtime if implemented using Fibonacci heap.}
+    }
+    
+    \Fn{\K{$G,v$}}{
+    	\tcc{Sequentially adds the shortest edge that does not create a cycle. $O(|E|\log|V|)$ runtime if implemented using Union-Find data structure.}
     }
 \end{algorithm}
 
-
-
+\section{Greedy Algorithm}
+\begin{definition}[Greedy Algorithm]
+A greedy algorithm is one that builds the solution iteratively using a sequence of local choices.
+\end{definition}
 \end{document}
 
 
