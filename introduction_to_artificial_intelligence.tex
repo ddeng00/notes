@@ -103,6 +103,9 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     \SetKwProg{Fn}{Function}{:}{} 
     \SetKwFunction{BS}{BS}
     \SetKwFunction{EX}{EXPLORE}   
+    \SetKwFunction{D}{DOMAIN}
+    \SetKwFunction{V}{VARIABLES}
+    \SetKwFunction{C}{CONSTRAINTS}
     
     \DontPrintSemicolon
     \KwIn{A constraint satisfaction problem $P$.}
@@ -116,19 +119,19 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     	\If{$A$ is complete} {
     		\Return{$A$}
     	}
-    	$unassigned \gets$ an unassigned \textsc{Variable}($P$) \\
-    	\ForEach{$value \in$ \textsc{Domain}($unassigned$)} {
-    		\If{$value$ is consistent with all \textsc{Constraint}($P$)} {
+    	$unassigned \gets$ an unassigned \V{$P$} \\
+    	\ForEach{$value \in$ \D{$unassigned$}} {
+    		\If{$value$ is consistent with all \C{$P$}} {
     			add $\{unassigned \gets value\}$ to $A$\\
     			$attempt \gets$ \EX{$P$, $A$} \\
-    			\If{$attemp$ is \textsc{Failure}}{
+    			\If{$attemp$ failed}{
     				remove $\{unassigned \gets value\}$ from $A$\\
     			} \Else {
     				\Return{$attempt$}
     			}
     		}
     	}
-    	\Return{\textsc{Failure}}
+    	\Return{failed}
     }
 \end{algorithm}
 
@@ -144,29 +147,31 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     \caption{Arc consistency filtering.}
     \SetKwProg{Fn}{Function}{:}{} 
     \SetKwFunction{AC}{AC-3}
-    \SetKwFunction{F}{FILTER}   
+    \SetKwFunction{F}{FILTER} 
+    \SetKwFunction{N}{NEIGHBORS}
+    \SetKwFunction{DOM}{DOMAIN}
     
     \DontPrintSemicolon
     \KwIn{A constraint satisfaction problem $P$.}
     
     \Fn{\AC{$P$}}{
-		$Q \gets$ \textsc{Queue} \\
+		$Q \gets$ empty Queue \\
 		enqueue all arcs $\in P$\\
 		\While{$Q$ is not empty} {
 			$(X_i, X_j) \gets$ dequeue from $Q$ \\
 			\If{\F{$X_i, X_j$} is successful} {
-				\ForEach{$X_k \in$ \textsc{Neighbor}($X_i$)} {
+				\ForEach{$X_k \in$ \N{$X_i$}} {
 					enqueue $(X_k, X_i)$
 				}
 			}
 		}
     }
     \Fn{\F($tail, head$)}{
-    	$result \gets$ \textsc{False} \\
-    	\ForEach{$value \in$ \textsc{Domain}($tail$)}{
-    		\If{$value$ violates some constraint with all values in \textsc{Domain}($head$)} {
-    		delete $value$ from \textsc{Domain}($tail$)
-    		$result \gets$ \textsc{True}
+    	$result \gets$ false \\
+    	\ForEach{$value \in$ \DOM{$tail$}}{
+    		\If{$value$ violates some constraint with all values in \DOM{$head$}} {
+    		delete $value$ from \DOM{$tail$} \\
+    		$result \gets$ true
     		}
     	}
     	\Return{$reuslt$}
@@ -227,7 +232,6 @@ Keep best $N$ hypotheses at each step (selection) based on a fitness function an
 
 
 \section{Games}
-\subsection{Minimax}
 \begin{algorithm}
     \caption{Minimax with alpha-beta pruning.}
     \SetKwProg{Fn}{Function}{:}{} 
@@ -235,6 +239,8 @@ Keep best $N$ hypotheses at each step (selection) based on a fitness function an
     \SetKwFunction{Max}{MAX-VALUE}   
     \SetKwFunction{Min}{MIN-VALUE}
     \SetKwFunction{Exp}{EXP-VALUE}
+    \SetKwFunction{MaxF}{MAX}
+    \SetKwFunction{MinF}{MIN}
     
     \DontPrintSemicolon
     \KwIn{A game state $S$}
@@ -249,21 +255,111 @@ Keep best $N$ hypotheses at each step (selection) based on a fitness function an
 			\Return{\Max{$S, \alpha, \beta$}}
 		} \If{the agent is minimizing} {
 			\Return{\Min($S, \alpha, \beta$)}
-		} \If{the agent is randomizing} {
-			\Return{\Exp{$S, \alpha, \beta$}}
 		}
     }
     
     \Fn{\Max{$S, \alpha, \beta$}} {
 		$v \gets -\infty$ \\
 		\ForEach{successor $S'$ of $S$}{
-			$v \gets$ \textsc{Max}($v$, \V{$S'$})
-		}    
+			$v \gets$ \MaxF{$v$, \V{$S'$}} \\
+			\If{$v \geq \beta$}{
+				\Return{$v$} \\
+			}
+			$\alpha \gets$ \MaxF{$\alpha, v$}
+		}    \Return{$v$}
+    }
+    
+    \Fn{\Min{$S, \alpha, \beta$}} {
+		$v \gets \infty$ \\
+		\ForEach{successor $S'$ of $S$}{
+			$v \gets$ \MinF{$v$, \V{$S'$}} \\
+			\If{$v \leq \alpha$}{
+				\Return{$v$} \\
+			}
+			$\beta \gets$ \MinF{$\beta, v$}
+		} \Return{$v$}
     }
 \end{algorithm}
 
+\begin{algorithm} [ht]
+    \caption{Expectimax.}
+    \SetKwProg{Fn}{Function}{:}{} 
+    \SetKwFunction{V}{VALUE}
+    \SetKwFunction{Max}{MAX-VALUE}   
+    \SetKwFunction{Min}{MIN-VALUE}
+    \SetKwFunction{Exp}{EXP-VALUE}
+    \SetKwFunction{MaxF}{MAX}
+    \SetKwFunction{MinF}{MIN}
+    \SetKwFunction{E}{E}
+    
+    \DontPrintSemicolon
+    \KwIn{A game state $S$}
+    \KwOut{The root minimax value.}
+    
+    \Fn{\V{$S$}}{
+		\If{$S$ is a terminal state} {
+			\Return{knwon temrinal value}
+		}
+		\If{the agent is maximizing} {
+			\Return{\Max{$S$}}
+		}  \If{the agent is randomizing} {
+			\Return{\Exp{$S$}}
+		}
+    }
+    
+    \Fn{\Max{$S$}} {
+		$v \gets -\infty$ \\
+		\ForEach{successor $S'$ of $S$}{
+			$v \gets$ \MaxF{$v$, \V{$S'$}} \\
+		}    \Return{$v$}
+    }
+    
+    \Fn{\Exp{$S$}} {
+    	$v \gets 0$ \\
+		\ForEach{successor $S'$ of $S$}{
+			$v \gets \mathbb{E}\,[$\V{$S'$}$]$ \tcp{expected value}
+		}    \Return{$v$}
+    }
+\end{algorithm}
 
+\begin{remark}
+Typically, performing Minimax and Expectimax to terminal states are too costly, which can be solved by terminating early and estimating the state utility with evaluation functions.
+\end{remark}
 
+\section{Markov Decision Processes}
+\begin{remark}
+Finite horizons (finite timestep before an agent terminates) and/or discount factors $(\gamma)$ ensure an agent terminates in MDP.
+\end{remark}
+
+\begin{definition}[Transition Function]
+$T(s,a,s')=P(s' \mid s,a)$
+\end{definition}
+
+\begin{definition}[Value Iteration]
+Initialize $V_0(s) \gets 0$ for all $s \in S$. Compute $\forall s \in S$
+\begin{align*}
+V_{k+1}(s) \gets \underset{a}{\max} \, \underset{s'}{\sum} \, T(s,a,s')[R(s,a,s')+\gamma V_k(s')] && \text{(value iteration)} \\
+\end{align*}
+until $V_i(s)$ convereges for all $s \in S$ (yields $V^*$). Then, compute $\forall s \in S$
+\begin{align*}
+\pi^*(s) \gets \underset{a}{\text{argmax}} \, \underset{s'}{\sum}\, T(s,a,s')[R(s,a,s')+\gamma V_k(s')] && \text{(policy extraction)}
+\end{align*}
+\end{definition}
+
+\begin{definition}[Policy Iteration]
+Define an initial policy $\pi_0$ (can be arbitrary, but ideality close to the optimal policy). Then, iteratively solve $\forall s \in S$
+\begin{align*}
+V^{\pi_i}(s) = \underset{s'}{\sum} \, T(s,\pi_i(s),s')[R(s,\pi_i(s),s')+\gamma V^{\pi_i}(s')] && \text{(policy evaluation)} \\
+\pi_{i+1}(s) \gets \underset{a}{\text{argmax}} \, \underset{s'}{\sum}\, T(s,a,s')[R(s,a,s')+\gamma V^{\pi_i}(s')] && \text{(policy improvement)}
+\end{align*}
+until $\pi(s)$ converges for all $s\in S$ (yields $pi^*$.
+\end{definition}
+\begin{remark}
+Policy evaluation solves a system of $|S|$ liear equations.
+\end{remark}
+\begin{remark}
+Policy iteration converges faster than value iteration.
+\end{remark}
 
 \end{document}
 
