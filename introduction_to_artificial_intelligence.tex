@@ -92,7 +92,6 @@ $A^*$ Graph Search\tnote{4} & PQ ($h(n)+g(n)$) & - & \textit{iff} $h(n)$ consist
 Implementation of search algorithms differ only in fringe strategies.
 \end{remark}
 
-\newpage
 \section{Constrained Satisfaction Problems}
 \begin{definition}[Constrained Satisfaction Problems]
 Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification problem} defined by variable $X_0, \dots, X_n$ with values from a domain $D$ that satisfies a set of constrains.
@@ -135,7 +134,6 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     }
 \end{algorithm}
 
-\newpage
 \subsection{Filtering}
 \begin{definition}[Arc Consistency]
 \begin{multline*}
@@ -202,7 +200,7 @@ Efficiency of the algorithm depends on $R=\tfrac{\text{number of constraints}}{\
 \end{remark}
 
 \subsection{Simulated Annealing}
-\begin{algorithm}
+\begin{algorithm}[ht]
     \caption{Simulated annealing.}
     
     \DontPrintSemicolon

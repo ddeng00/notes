@@ -121,7 +121,7 @@ If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_
 \end{algorithm}
 
 \clearpage
-\subsection{Polynomial Multiplication}
+\subsection{Applications of FFT}
 \begin{algorithm}[ht]
     \caption{Fast Polynomial Multiplication}
     
@@ -135,7 +135,6 @@ If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_
     \Return {$\frac{1}{n} M_n(\omega^{-1})\hat{\vec{c}}$} \quad \mbox{(inverse matrix)}
 \end{algorithm}
 
-\subsection{Cross-Correlation}
 \begin{definition}[Cross-Correlation]
 $corr(\vec{x},\vec{y})[k] = \sum x_i y_{i-k}$, which measures similarity.
 \end{definition}
@@ -170,8 +169,8 @@ Adjacency List & $\Theta(|V|+|E|)$ & $\Theta(degree(u))$ & $\Theta(degree(u))$ &
 \end{tabular}
 \end{table}
 
+\newpage
 \subsection{Depth-First Search}
-
 \begin{algorithm}[ht]
     \caption{Depth-first search}
     \SetKwFunction{DFS}{DFS}
@@ -203,25 +202,13 @@ Adjacency List & $\Theta(|V|+|E|)$ & $\Theta(degree(u))$ & $\Theta(degree(u))$ &
 		}
 		postorder[v] $\gets$ clk++ \\
 	}
+	\tcc{Preorder-postorder intervals are either nested or disjoint.
+}
+	\tcc{postorder[$u$] $\leq$ postorder[$v$] \textit{iff} $(u,v)$ is a back edge.
+}
+	\tcc{$G$ contains a cycle \textit{iff} it contains a back edge.
+}
 \end{algorithm}
-
-\begin{remark}
-Preorder-postorder intervals are either nested or disjoint.
-\end{remark}
-
-\begin{definition}[Back Edge]
-A back edge is an non-tree edge that goes from a descendant vertex to an ancestor vertex.
-\end{definition}
-
-\begin{remark}
-postorder[$u$] $\leq$ postorder[$v$] \textit{iff} $(u,v)$ is a back edge.
-\end{remark}
-
-\begin{remark}
-$G$ contains a cycle \textit{iff} it contains a back edge.
-\end{remark}
-
-\subsubsection{Applications of DFS}
 
 \begin{algorithm}[ht]
     \caption{Topological sort.}
@@ -293,6 +280,83 @@ u \text{ is in sink SCC of graph }G &\Leftrightarrow u \text{ is in source SCC o
 \begin{definition}[Greedy Algorithm]
 A greedy algorithm is one that builds the solution iteratively using a sequence of local choices.
 \end{definition}
+
+\begin{algorithm}
+    \caption{Example greedy algorithms.}
+    \SetKwFunction{Scheduling}{SCHEDULING}  
+    \SetKwFunction{Huffman}{HUFFMAN}
+    \SetKwFunction{Set}{SET-COVER}
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    
+    \Fn{\Scheduling} {
+	\tcc{Find the maximum set of jobs that can be completed within time by iteratively select the next job to have the smallest end time without conflicting existing schedule. $O(n \log n)$ runtime if sorting the collection of jobs first.}    
+    }
+    
+    \Fn{\Huffman}{
+    \tcc{Find a prefix tree for prefix-free Huffman coding by iteratively combine the two least frequent elements of the alphabet and retrieve the order of the prefix tree accordingly. $O(n \log n)$ runtime if implemented with min-heap.}
+    }
+    
+    \KwIn{A set of partitions $S=\{S_1,\dots,S_m\}$ that covers the universe $\{1,\dots,n\}$.}
+    \KwOut{The indices of the smallest sub-collection of $S$ that covers the universe.}
+	\Fn{\Set}{	
+	\tcc{Greedy search yields sub-optimal but competitive solution to the set-cover problem. If the optimal solution uses $k$ sets, then the greedy solution uses at most $k \ln n$ sets.}    
+    $A \gets \{1,\dots,n\}$ \\
+    $B \gets \emptyset$ \\
+    \While{$|A|>0$}{
+    	let $i\in [m]\setminus B$ be s.t. $|A \cap S_i|$ is maximum \\
+    	$A \gets A \setminus S_i$ \\
+    	$B \gets B \cup {i}$
+    }   \Return{$B$}    }
+\end{algorithm}
+
+\section{Union-Find}
+\begin{definition}[Amortized Analysis]
+Suppose a data structure supports $k$ operations. Then the amortized cost of each operation is $t_i$ if for any sequence of operations with $N_i$ of $O_i$ operations, the total time is at most $\sum_{i=1}^k t_i N_i$.
+\end{definition}
+
+\begin{algorithm}
+    \caption{Union-find (disjoint forest implementation).}
+    \SetKwFunction{Make}{MAKE-SET}
+    \SetKwFunction{Find}{FIND} 
+    \SetKwFunction{Union}{UNION} 
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    
+	\tcc{$O((m+n)\log^* n)$ runtime.}    
+    
+    $parent[1,\dots,n]$\\
+    $rank[1,\dots,n]$     \tcp{rank is defined as the height if no path compression occur.}
+    \Fn{\Make{$x$}}{
+	$parent[x] \gets x$ \\
+	$rank[x] \gets 0$ \\    
+    }
+    
+    \Fn{\Find{$x$}} {
+	\If{$x = parent[x]$} {
+	\Return{$x$}
+	}
+	$parent[x] \gets$ \Find{$parent[x]$} \tcp{path compression}
+    \Return{$parent[x]$}
+    }
+    
+    \Fn{\Union{$x,y$}} {
+    	$x\gets$ \Find{$x$} \\
+    	$y\gets$ \Find{$y$} \\
+    	\If{$x=y$} {
+    		\Return \tcp{no work needed}
+    	}
+    	\If{$rank[x]>rank[y]$}{
+			swap $x$ and $y$    	
+    	}
+    	$parent[x] \gets y$
+    	\If{$rank[x] = rank[y]$} {
+			$rank[y] \gets rank[y] + 1$    	
+    	}
+    }
+\end{algorithm}
 \end{document}
 
 
