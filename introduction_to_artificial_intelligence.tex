@@ -27,7 +27,7 @@
 \begin{document}
 \maketitle
 
-\section{Search Problems}
+\section{Agents}
 \begin{definition}[Reflex Agent]
 A reflex agent chooses actions based on its current perception of the world.
 \end{definition}
@@ -35,31 +35,22 @@ A reflex agent chooses actions based on its current perception of the world.
 \begin{definition}[Planning Agent]
 A planning agent chooses actions based on hypothesized consequences of actions.
 \end{definition}
+\clearpage
 
-\begin{definition}[Search Problem]
-A search problem consists of a state space, a successor function, a start state, and a goal test.
-\end{definition}
-
-\section{Search Algorithms}
-
+\section{General Search Problems}
 \subsection{Heuristics}
 \begin{definition}[Heuristic] 
 A heuristic $h(n)$ is a function that estimates the distance from state $n$ to the goal state for a particular search problem. It is often solutions of relaxed problems.
+\begin{enumerate}
+\item A heuristic is \underline{admissible} if $0 \leq h(n) \leq h^*(n)$ where $h^*$ is the true cost to goal state;
+\item A heuristic is \underline{consistent} if $h(n) - h(n+1) \leq c(n, n+1)$ where $c$ is the cost between states $n$ and $n+1$.
+\end{enumerate}
 \end{definition}
-
-\begin{definition}[Admissibility] 
-A heuristic is admissible, or optimistic, if $0 \leq h(n) \leq h^*(n)$ where $h^*$ is the true cost to goal state.
-\end{definition}
-
-\begin{definition}[Consistency]
-A heuristic is consistent if $h(n) - h(n+1) \leq c(n, n+1)$ where $c$ is the cost between states $n$ and $n+1$.
-\end{definition}
-
 \begin{remark}
 Consistency necessarily implies admissibility.
 \end{remark}
 
-\clearpage
+\subsection{Search Algorithms}
 \begin{table}[ht]
 \centering
 \begin{adjustbox}{width={\textwidth}}
@@ -91,6 +82,7 @@ $A^*$ Graph Search\tnote{4} & PQ ($h(n)+g(n)$) & - & \textit{iff} $h(n)$ consist
 \begin{remark}
 Implementation of search algorithms differ only in fringe strategies.
 \end{remark}
+\clearpage
 
 \section{Constrained Satisfaction Problems}
 \begin{definition}[Constrained Satisfaction Problems]
@@ -133,6 +125,7 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     	\Return{failed}
     }
 \end{algorithm}
+\clearpage
 
 \subsection{Filtering}
 \begin{definition}[Arc Consistency]
@@ -188,13 +181,17 @@ The LCV policy chooses a value assignment that violates the least amount of cons
 \subsection{Structure}
 Given a tree-structured CSP, represent it as a directed acyclic graph. Enforcing arc consistency in reverse topological order then assigning in topological order ensures a runtime of $O(nd^2)$  (as opposed to $O(d^n)$ in the general case). \\
 TODO: nearly tree-like CSPs and tree decomposition.
+\clearpage
+
 \section{Local Search}
-Improve a single option until no further improvements can be made.
-\begin{remark}
-Generally, local search is faster and more memory efficient at the expense of completeness and optimality.
-\end{remark}
-\subsection{Iterative Algorithm for CSP/Hill Climbing}
-Starting with a "complete" state, randomly select any conflicted variables and reassign values using min-conflicts heuristics.
+\begin{definition}[Local Search]
+A search strategy that improve a single option until no further improvements can be made. Typically, local search is faster and more memory efficient than other search algorithms but is generally neither complete nor optimal.
+\end{definition}
+
+\begin{definition}[Hill Climbing]
+A CSP strategy that randomly selects a conflicting variable and reassign values using min-conflicts heuristics.
+\end{definition}
+
 \begin{remark}
 Efficiency of the algorithm depends on $R=\tfrac{\text{number of constraints}}{\text{number of variables}}$; computation time is approximately constant time except when $R$ approaches the \textit{critical ratio}.
 \end{remark}
@@ -225,11 +222,20 @@ Efficiency of the algorithm depends on $R=\tfrac{\text{number of constraints}}{\
     }
 \end{algorithm}
 
-\section{Genetic Algorithms}
-Keep best $N$ hypotheses at each step (selection) based on a fitness function and have pairwise crossover operations (and, optionally, mutation operations) to generate a new set of hypotheses.
-
+\subsection{Genetic Algorithm}
+\begin{definition}[Genetic Algorithm]
+A strategy that keeps the best $N$ hypothesis at each step based on a fitness function and generate next generation using pairwise cross-over operations (and, optionally, mutation operations).
+\end{definition}
+\clearpage
 
 \section{Games}
+\begin{definition}[Games]
+Games are multi-agent search problems that could be zero-sum (adversarial) or general sum.
+\end{definition}
+\subsection{Minimax}
+\begin{definition}[Minimax]
+A zero-sum-game algorithm that assumes the opponent is an optimal adversary.
+\end{definition}
 \begin{algorithm}
     \caption{Minimax with alpha-beta pruning.}
     \SetKwProg{Fn}{Function}{:}{} 
@@ -279,6 +285,10 @@ Keep best $N$ hypotheses at each step (selection) based on a fitness function an
     }
 \end{algorithm}
 
+\subsection{Expectimax}
+\begin{definition}[Expectimax]
+A zero-sum-game algorithm that assumes the opponent acts based on some probability distribution.
+\end{definition}
 \begin{algorithm} [ht]
     \caption{Expectimax.}
     \SetKwProg{Fn}{Function}{:}{} 
@@ -319,10 +329,7 @@ Keep best $N$ hypotheses at each step (selection) based on a fitness function an
 		}    \Return{$v$}
     }
 \end{algorithm}
-
-\begin{remark}
-Typically, performing Minimax and Expectimax to terminal states are too costly, which can be solved by terminating early and estimating the state utility with evaluation functions.
-\end{remark}
+\clearpage
 
 \section{Markov Decision Processes}
 \begin{remark}
@@ -333,17 +340,35 @@ Finite horizons (finite timestep before an agent terminates) and/or discount fac
 $T(s,a,s')=P(s' \mid s,a)$
 \end{definition}
 
-\begin{definition}[Value Iteration]
-Initialize $V_0(s) \gets 0$ for all $s \in S$. Compute $\forall s \in S$
-\begin{align*}
-V_{k+1}(s) \gets \underset{a}{\max} \, \underset{s'}{\sum} \, T(s,a,s')[R(s,a,s')+\gamma V_k(s')] && \text{(value iteration)} \\
-\end{align*}
-until $V_i(s)$ convereges for all $s \in S$ (yields $V^*$). Then, compute $\forall s \in S$
-\begin{align*}
-\pi^*(s) \gets \underset{a}{\text{argmax}} \, \underset{s'}{\sum}\, T(s,a,s')[R(s,a,s')+\gamma V_k(s')] && \text{(policy extraction)}
-\end{align*}
-\end{definition}
+\subsection{Value Iteration}
+\begin{algorithm}
+    \caption{Value Iteration}
+    \SetKwFunction{Policy}{POLICY-EXTRACTION}
+    \SetKwFunction{Value}{VALUE-ITERATION}  
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    \KwIn{A MDP $(S,A,R,T,\gamma)$.}
+    \KwOut{The optimal policy $\pi^*(s)$ for all $s\in S$.}
+    
+    \Fn{\Policy{}} {
+    	$V^* \gets$ \Value{} \tcp{optimal value}
+    	\ForEach{$s\in S$} {
+    	$\pi^*(s) \gets \underset{a}{\text{argmax}} \, \underset{s'}{\sum}\, T(s,a,s')[R(s,a,s')+\gamma V_k(s')]$
+    	}
+    	\Return{$\pi^*(s) \mid \forall s \in S$}
+    }
+    \Fn{\Value{}} {
+    	Initialize $V_0(s) \gets 0$ for all $s \in S$ \\
+    	\While{$V_{k+1}(s) \neq V_k(s) \mid \forall s \in S$} {
+    		\tcp{repeat until values converge}
+    		$V_{k+1}(s) \gets \underset{a}{\max} \, \underset{s'}{\sum} \, T(s,a,s')[R(s,a,s')+\gamma V_k(s')]$ \\
+    	}
+    	\Return{$V^*(s) \gets V_{k+1}(s) \mid \forall s \in S$}
+    }
+\end{algorithm}
 
+\subsection{Policy Iteration}
 \begin{definition}[Policy Iteration]
 Define an initial policy $\pi_0$ (can be arbitrary, but ideality close to the optimal policy). Then, iteratively solve $\forall s \in S$
 \begin{align*}
@@ -359,6 +384,53 @@ Policy evaluation solves a system of $|S|$ liear equations.
 Policy iteration converges faster than value iteration.
 \end{remark}
 
+\section{Reinforcement Learning}
+\begin{remark}
+Reinforcement learning operates on MDP problems where the $T$ and $R$ functions are unknown.
+\end{remark}
+
+\subsection{Model-Based Learning}
+\begin{definition}[Model-Based RL]
+An algorithm that counts and normalizes sample outcomes $s'$ for each $s,a$ to construct $\hat{T}(s,a,s')$ and discovers each $\hat{R}(s,a,s')$ through exploration. The approximated MDP is then solved by value or policy iteration.
+\end{definition}
+
+\subsection{Model-Free Learning}
+\begin{definition}[Direct Evaluation]
+An algorithm that fixes some policy $\pi$ and empirically computes $V^\pi(s)$ for all $s \in S$ by averaging total sample utility for a given state.
+\end{definition}
+\begin{remark}
+Direct evaluation wastes information about state connections and will take a long time to learn.
+\end{remark}
+
+\begin{definition}[Temporal Difference Learning]
+$$V^\pi(s) \gets (1-\alpha)V^\pi(s) + \alpha [R(s,\pi(s),s')+\gamma V^\pi(s')]$$
+\end{definition}
+
+\begin{remark}
+Can't extract policy.
+\end{remark}
+
+\begin{definition}[Q-Learning]
+$$Q(s,a) \gets (1-\alpha)Q(s,a) + \alpha [R(s,a,s')+\gamma \, \underset{a'}{\max}\,Q(s',a')]$$
+\end{definition}
+\begin{remark}
+Q-learning is an example of off-policy learning, in which the algorithm can learn the optimal policy even by taking sub-optimal or random actions.
+\end{remark}
+
+\begin{definition}[$\epsilon$-Greedy Policies]
+Define some probability $0\leq \epsilon \leq 1$ to act randomly and explore. $\epsilon$ should be lowered over time to favor more exploitation as the learning becomes complete.
+\end{definition}
+
+\begin{definition}[Exploration Function]
+\begin{align*}
+Q(s,a) \gets (1-\alpha)Q(s,a) + \alpha [R(s,a,s')+\gamma \, \underset{a'}{\max}\,f(s',a')] \\
+f(s,a) = Q(s,a)+\tfrac{\text{const.}}{\text{count}(Q(s,a))}
+\end{align*}
+\end{definition}
+
+\begin{remark}
+$f(s,a)$ shown here is only a common example where the ``bonus'' for exploration diminishes as q-states are explored more and more.
+\end{remark}
 \end{document}
 
 

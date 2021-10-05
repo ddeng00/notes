@@ -29,6 +29,13 @@
 \maketitle
 
 \section{Complexity Analysis}
+\begin{definition}[Partial Sums]
+\begin{align*}
+S_k = \sum_{n=1}^k a_n = \frac{k}{2}(a_1+a_k) && \text{(Arithmetic Series)} \\
+S_k = \sum_{n=1}^k a_1(r)^n = a_1 \left(\frac{1-r^k}{1-r}\right) && \text{(Geometric Series)} \\
+\end{align*}
+\end{definition}
+
 
 \begin{definition}[Asymptotic Notations]
 \begin{align*}
@@ -39,6 +46,10 @@ f = \omega(g) \approx f(n) > c\cdot g(n) \\
 f = \Theta(g) \approx f(n) = c\cdot g(n) \\
 \end{align*}
 \end{definition}
+
+\begin{remark}
+$O(i^n \mid i > 1) > O(n^j) > O(log^k n)$
+\end{remark}
 
 \begin{theorem}[Master Theorem]
 If $T(n)=aT([n/b])+O(n^d)$ for some constants $a>0$, $b>1$, and $d\geq 0$, then
