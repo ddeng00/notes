@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{Discrete Mathematics and Probability Theory}
+\author{Daniel Deng}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Basic Facts}
+\begin{align*}
+(P\implies Q) \equiv (\neg P \vee Q) \\
+\mathbb{Q}\equiv \{ \tfrac{a}{b} \mid a,b\in \mathbb{Z}\} \\
+(|S|=k)\implies (|\mathcal{P}(S)|=2^k) \\
+(S \subseteq \mathbb{N})\wedge (S\neq \emptyset) \implies \exists\min{(S)}
+\end{align*}
+
+\section{Stable Matching}
+\begin{definition}[Stable Matching]
+Stable Matching is job optimal and candidate pessimal.
+\end{definition}
+
+\section{Graphs}
+% TODO
+
+\section{Modular Arithmetic}
+\begin{definition}[Greatest Common Divisor]
+$\left(\exists a,b\right)\left(\mathrm{gcd}(x,y)=ax+by\right)$
+\end{definition}
+
+\begin{definition}[Galois Field]
+$\mathrm{\left(\forall \,\mathrm{prime} \,n\right)\left( GF(n):= \text{mod n space}\right)}$
+\end{definition}
+
+\begin{definition}[Chinese Remainder Theorem]
+
+\end{definition}
+\clearpage
+
+\section{Discrete Probability}
+\begin{definition}[Discrete Probability Space]
+For any discrete probability space $\Omega$
+\begin{itemize}
+\item $\left(\forall \omega \in \Omega \right)\left( 0 \leq  \mathbb{P}(\omega) \leq 1\right)$;
+\item $\underset{\omega \in \Omega}{\sum}\, \mathbb{P}(\omega) = 1$. 
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Event] For all events $A\in \Omega$,
+$$\mathbb{P}(A)= \underset{\omega \in A}{\sum} \, \mathbb{P}(\omega) = \frac{|A|}{|\Omega|}$$
+\end{definition}
+
+\subsection{Conditional Probability}
+\begin{definition}[Conditional Probability]
+$$\mathbb{P}(A|B) = \frac{\mathbb{P}(A \cup B)}{\mathbb{P}(B)} = \frac{\mathbb{P}(B|A) \mathbb{P}(A)}{\mathbb{P}(B)}$$
+\end{definition}
+
+
+
+\begin{definition}[Total Probability Rule]
+Let $A_1,\dots,A_n$ be partitions of $\Omega$. Then
+\[\mathbb{P}(B)= \sum_{i=1}^n \mathbb{P}(B \cap A_i) = \sum_{i=1}^n \mathbb{P}(B|A_i) \mathbb{P}(A_i)\]
+\end{definition}
+
+\begin{remark}
+If events $A$ and $B$ are positively correlated, $\mathbb{P}(A|B)>\mathbb{P}(A)$. If they are negatively correlated, $\mathbb{P}(A|B)<\mathbb{P}(A)$.
+\end{remark}
+
+\begin{definition}[Maximum Likelihood Estimation]
+\[\theta_{MLE} = \underset{\theta}{\mathrm{argmax}}\, \mathbb{P}(X|\theta)\]
+\end{definition}
+
+\begin{definition}[Maximum A Posteriori Estimation]
+\[\theta_{MAP} = \underset{\theta}{\mathrm{argmax}}\, \mathbb{P}(\theta|X)=\underset{\theta}{\mathrm{argmax}}\, \frac{\mathbb{P}(X|\theta)\mathbb{P}(\theta)}{\mathbb{P}(X)} = \underset{\theta}{\mathrm{argmax}}\, \mathbb{P}(X|\theta)\mathbb{P}(\theta)\]
+\end{definition}
+
+\begin{remark}
+If the probability space $\Omega$ is uniform, then $\theta_{MLE} = \theta_{MAP}$.
+\end{remark}
+
+\begin{definition}[Mutual Independence]
+\[\mathbb{P}\left( \overset{n}{\underset{i=1}{\cap}} A_i \right) = \prod_{i=1}^{n} \mathbb{P}(A_i) \]
+\end{definition}
+
+\begin{remark}
+Events $A$ and $B$ are independent \textit{iff} $\mathbb{P}(A|B)=\mathbb{P}(A)$.
+\end{remark}
+
+\subsection{Product Rule}
+\begin{definition}[Product Rule]
+\[\mathbb{P}\left(\overset{n}{\underset{i=1}{\cap}} A_i \right) = \prod_{i=1}^{n} \mathbb{P}\left(  A_i | \underset{j<i}{\cap} A_j  \right)   \]
+\end{definition}
+
+\subsection{Inclusion-Exclusion Principle}
+\begin{definition}[Inclusion-Exclusion Principle]
+\end{definition}
+\end{document}
+
+

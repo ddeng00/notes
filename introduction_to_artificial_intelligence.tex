@@ -417,6 +417,13 @@ $$Q(s,a) \gets (1-\alpha)Q(s,a) + \alpha [R(s,a,s')+\gamma \, \underset{a'}{\max
 Q-learning is an example of off-policy learning, in which the algorithm can learn the optimal policy even by taking sub-optimal or random actions.
 \end{remark}
 
+\begin{definition}[Approximate Q-Learning] Represent q-values as weighted sums of features $Q(s,a) := \vec{w} \cdot \vec{f}(s,a)$. The update rule for Q-Learning then becomes
+\begin{align*}
+\Delta \gets [R'(s,a,s')+\gamma \, \underset{a'}{\max}\,Q(s',a')]-Q(s,a) \\
+w_i \gets w_i + \alpha \cdot \Delta \cdot f_i(s,a)
+\end{align*}
+\end{definition}
+
 \begin{definition}[$\epsilon$-Greedy Policies]
 Define some probability $0\leq \epsilon \leq 1$ to act randomly and explore. $\epsilon$ should be lowered over time to favor more exploitation as the learning becomes complete.
 \end{definition}
