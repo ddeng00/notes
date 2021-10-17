@@ -145,6 +145,7 @@ Constrained Satisfaction Problems (CSPs) are a type of \textbf{identification pr
     \DontPrintSemicolon
     \KwIn{A constraint satisfaction problem $P$.}
     
+    \tcc{$O(|S||A|^3)$ runtime}
     \Fn{\AC{$P$}}{
 		$Q \gets$ empty Queue \\
 		enqueue all arcs $\in P$\\
@@ -358,7 +359,7 @@ $T(s,a,s')=P(s' \mid s,a)$
     	}
     	\Return{$\pi^*(s) \mid \forall s \in S$}
     }
-    \Fn{\Value{}} {
+    \Fn{\Value{}} {\tcp{$O(|S|^2 |A|)$ runtime}
     	Initialize $V_0(s) \gets 0$ for all $s \in S$ \\
     	\While{$V_{k+1}(s) \neq V_k(s) \mid \forall s \in S$} {
     		\tcp{repeat until values converge}

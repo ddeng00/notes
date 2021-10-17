@@ -368,6 +368,14 @@ Suppose a data structure supports $k$ operations. Then the amortized cost of eac
     	}
     }
 \end{algorithm}
+\begin{remark}
+Union-Find Invariants:
+\begin{itemize}
+\item a tree rooted at $x$ has $\geq 2^{r[x]}$ items;
+\item $(\forall x)$, if $x$ is not a root, $r[p[x]] > r[x]$;
+\item the number of items of exactly rank $k$ is $\leq \frac{n}{2^k}$.
+\end{itemize}
+\end{remark}
 \end{document}
 
 
