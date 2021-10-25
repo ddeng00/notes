@@ -376,6 +376,55 @@ Union-Find Invariants:
 \item the number of items of exactly rank $k$ is $\leq \frac{n}{2^k}$.
 \end{itemize}
 \end{remark}
+
+\section{Dynamic Programming}
+\begin{definition}[Top-Down DP/Memoization]
+Recursion + look-up table
+\end{definition}
+
+\begin{definition}[Bottom-Up DP]
+Fill up the look-up table iteratively instead of recursively
+\end{definition}
+
+\begin{remark}
+Bottom-up DP sometimes have better memory
+\end{remark}
+
+\section{Linear Programming}
+\begin{definition}[Linear Programming]
+Linear programming describes a broad class of optimization tasks in which both the constraints and the optimization criterion are linear functions.
+\end{definition}
+
+\begin{remark}
+The optimum of a linear program is achieved at a vertex of the feasible region.
+\end{remark}
+
+\begin{remark}
+A linear program does not have an optimum \textit{iff} it is infeasible or unbounded.
+\end{remark}
+
+\begin{definition}[Duality] Given two forms of the same LP:
+\begin{itemize}
+\item Primal LP --- $\underset{\vec{x}}{\text{argmax}}\, \{\vec{c}^{\,\textsf{T}} \vec{x} \mid A\vec{x}\leq \vec{b} \}$
+\item Qual LP --- $\underset{\vec{y}}{\text{argmin}}\, \{\vec{b}^{\,\textsf{T}} \vec{y} \mid A^\textsf{T}\vec{y} = \vec{c}, \, \vec{y} \geq 0 \}$
+\end{itemize}
+Then, 
+\begin{itemize}
+\item Weak duality --- $\text{OPT}(P) \leq \text{OPT}(D)$
+\item Strong duality --- Primal LP is bounded and feasible $\implies$ Dual LP is bounded and feasible $\wedge$ $\text{OPT}(P) = \text{OPT}(D)$
+\end{itemize}
+\end{definition}
+\begin{remark}
+Dual/Primal unbounded $\implies$ Primal/Dual infeasible.
+\end{remark}
+\subsection{LP Algorithm Overview}
+\begin{definition}[Simplex]
+A greedy algorithm that starts at a vexter and keeps moving to better vertices
+\end{definition}
+TODO
+
+\section{Network Flow}
+
 \end{document}
 
 
