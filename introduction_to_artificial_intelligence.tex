@@ -439,6 +439,37 @@ f(s,a) = Q(s,a)+\tfrac{\text{const.}}{\text{count}(Q(s,a))}
 \begin{remark}
 $f(s,a)$ shown here is only a common example where the ``bonus'' for exploration diminishes as q-states are explored more and more.
 \end{remark}
+\clearpage
+
+\section{Bayesian Network}
+\begin{definition}[Conditional Independence]
+$\forall x,y,z : P(x|z,y)=P(x|z)$
+\end{definition}
+
+\begin{definition}[Bayes' Net] Bayes' Net is a graphic model that describes complex joint distributions using simple, local distributions (conditional probabilities)
+\begin{itemize}
+\item Nodes---variables (with domains) [assigned = observed, unassigned = unobserved]
+\item Arcs---interactions (i.e., encode conditional independence when lacking arrows) $\implies P(x_i|x_1,\dots,x_{i-1})=P(x_i|parents(X_i))$
+\item A conditional distribution for each node
+\end{itemize}
+\end{definition}
+\begin{remark}
+Bayes' Net does not imply causation, only the lack thereof
+\end{remark}
+
+\begin{definition}[Inference by Enumeration]
+General procedure:
+\begin{enumerate}
+\item Join Factors: $\forall r,t: P(r,t)=P(r)P(t|r)$
+\item Eliminate: $P(T)=\sum_r P(R,T)$
+\item Normalize: $P(Q|e_1,\dots,e_k)=\frac{P(Q,e_1,\dots,e_k)}{\sum_q P(Q,e_1,\dots,e_k)}$
+\end{enumerate}
+
+\begin{definition}[Variable Elimination] Faster than inference by enumeration via interleaving joining and marginalizing
+
+\end{definition}
+\end{definition}
+
 \end{document}
 
 
