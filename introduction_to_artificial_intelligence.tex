@@ -12,6 +12,7 @@
 \newtheorem{definition}{Definition}[section]
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
+\newcommand{\indep}{\perp \!\!\! \perp}
 
 \renewcommand\arraystretch{1.5}
 
@@ -443,10 +444,10 @@ $f(s,a)$ shown here is only a common example where the ``bonus'' for exploration
 
 \section{Bayesian Network}
 \begin{definition}[Conditional Independence]
-$\forall x,y,z : P(x|z,y)=P(x|z)$
+$\forall x,y,z : P(x|z,y)=P(x|z)$ (i.e., $x \indep y \mid z$)
 \end{definition}
 
-\begin{definition}[Bayes' Net] Bayes' Net is a graphic model that describes complex joint distributions using simple, local distributions (conditional probabilities)
+\begin{definition}[Bayes' Net] Bayes' Net is a graphic model (DAG) that describes complex joint distributions using simple, local distributions (conditional probabilities)
 \begin{itemize}
 \item Nodes---variables (with domains) [assigned = observed, unassigned = unobserved]
 \item Arcs---interactions (i.e., encode conditional independence when lacking arrows) $\implies P(x_i|x_1,\dots,x_{i-1})=P(x_i|parents(X_i))$
@@ -472,6 +473,69 @@ Variable elimination is faster than inference by enumeration via interleaving jo
 \end{remark}
 
 \subsection{Sampling}
+\begin{algorithm}
+    \caption{Sampling.}
+    \SetKwFunction{Prior}{PRIOR-SAMPLING} 
+    \SetKwFunction{Rej}{REJECTION-SAMPLING} 
+    \SetKwFunction{Like}{LIKELIHOOD-WEIGHTING-SAMPLING}
+    \SetKwFunction{Gibbs}{GIBBS-SAMPLING}
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    
+    \Fn{\Prior}{
+		\For{$i=1,2,\dots,n$ in topological order} {
+			Sample $x_i$ from $P(X_i \mid \text{Parents}(X_i))$
+		} \Return{$(x_1, x_2,\dots,x_n)$}
+    }
+    \Fn{\Rej}{
+    	\tcp{Will reject lots of samples if evidence is unlikely.}
+    	\For{$i=1,2,\dots,n$ in topological order} {
+			Sample $x_i$ from $P(X_i \mid \text{Parents}(X_i))$\\
+			\If{$x_i$ inconsistent with evidence} {
+				\Return \tcp{no sample generated}			
+			}
+		} \Return{$(x_1, x_2,\dots,x_n)$}
+    }
+    \Fn{\Like}{
+		$w \gets 1.0$ \\    	
+    	\For{$i=1,2,\dots,n$ in topological order} {
+			\If{$X_i$ is an evidence variable}{
+				$X_i \gets$ observation $x_i$ from $X_i$ \\
+				$w \gets w \times P(x_i \mid \text{Parents}(X_i))$\\
+			} \Else {
+				Sample $x_i$ from $P(X_i \mid \text{Parents}(X_i))$\\
+			}
+		} \Return{$(x_1, x_2,\dots,x_n),w$}
+    }
+    \Fn{\Gibbs}{
+    
+    
+    
+    }
+\end{algorithm}
+
+\subsection{D-Separation}
+\begin{definition}[Causal Chains] $X \to Y \to Z$ 
+$$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies \neg(X \indep Z)  \wedge  (X\indep Z \mid Y)$$
+\end{definition}
+
+\begin{definition}[Common Causes] $X \leftarrow Y \to Z$
+\[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies \neg(X \indep Z)  \wedge  (X\indep Z \mid Y)       \]
+\end{definition}
+
+\begin{definition}[Common Effect] $X\to Z \leftarrow Y$
+\[  (X \indep Z)  \wedge    \neg (X\indep Z \mid Y)   \]
+\end{definition}
+\begin{definition}[D-Separation]
+$X \indep Y \mid Z$ \textit{iff} $X$ and $Y$ are ``d-separated'' by $Z$ (i.e., all undirected path from $X$ to $Z$ are inactive). A path is active if all triple it contains is active:
+\begin{itemize}
+\item Causal chain $A\to B\to C$ where $B$ is unobserved
+\item Common cause $A\leftarrow B \to C$ where $B$ is unobserved
+\item Common effect $A \to B \leftarrow C$ where $B$ or one of its descendants is observed
+\end{itemize}
+\end{definition}
+
 
 \end{document}
 
