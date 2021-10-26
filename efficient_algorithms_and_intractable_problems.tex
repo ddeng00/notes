@@ -4,6 +4,7 @@
 \usepackage{algpseudocode}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{threeparttable, adjustbox, booktabs}
+\usepackage{outlines}
 
 \def\endproofmark{$\Box$}
 \newtheorem{theorem}{Theorem}[section]
@@ -389,24 +390,90 @@ Fill up the look-up table iteratively instead of recursively
 \begin{remark}
 Bottom-up DP sometimes have better memory
 \end{remark}
+\clearpage
 
 \section{Linear Programming}
-\begin{definition}[Linear Programming]
-Linear programming describes a broad class of optimization tasks in which both the constraints and the optimization criterion are linear functions.
+\begin{definition}[Linear Programming] Linear programming (LP) describes a broad class of optimization tasks in which both the constraints and the optimization criterion are linear functions. The optimum of a linear program is achieved at a vertex of the convex feasible region.
 \end{definition}
 
 \begin{remark}
-The optimum of a linear program is achieved at a vertex of the feasible region.
+A linear program does not have an optimum \textit{iff} its feasible region is infeasible and/or unbounded.
 \end{remark}
 
+\begin{definition}[Simplex Method]
+A standard greedy algorithm for solving LP by hill-climbing on vertices of the feasible region.
+\end{definition}
 \begin{remark}
-A linear program does not have an optimum \textit{iff} it is infeasible or unbounded.
+Solves real-life LP in polynomial time.
 \end{remark}
+
+\subsection{LP Conversion}
+\begin{outline}[enumerate]
+\1 (Maximization $\leftrightarrow$ minimization) multiply the
+coefficients of the objective function by $-1$
+\1 (Inequality $\to$ equality) $ax\leq b \to ax+s = b \mid s \geq 0$
+\1 (Equality $\to$ Inequality) $ax=b \to ax\leq b \wedge ax\geq b$
+\1 (Signed $\leftrightarrow$ unsigned) $x \leftrightarrow x^+ - x^- \mid x^+,x^- \geq 0$
+\end{outline}
+
+\subsection{Network Flow}
+\begin{definition}[Flow] Given a directed graph $G=(V,E)$ with capacities $c_e>0$ on all edges. The flow $f$ from source $s$ to sink $t$ satisfies the constraints:
+\begin{outline}[enumerate]
+\1 For all $e\in E$, 
+$$0\leq f_e\leq c_e$$ 
+\1 For all $e\in E\setminus\{s,t\}$,
+$$\sum_{(w,u)\in E} f_{wu} = \sum_{(u,z)\in E} f_{uz} \quad \text{(conservation of flow)}$$
+\end{outline}
+\end{definition}
+
+\begin{remark} By the conservation principle,
+\[\text{size}(f) = \sum_{(s,u)\in E} f_{su}\]
+\end{remark}
+
+\begin{algorithm}[ht]
+    \caption{Ford-Fulkerson}
+    \tcp{Simplex algorithm for solving max-flow problem. Pseudopolynomial time complexity; $O(|E|F)$}
+    \DontPrintSemicolon
+    \KwIn{$G=(V,E),s,t$}
+    \KwOut{$f$}
+    
+    $f \gets 0$ \\
+	$E^f \gets E \cup \{ rev(e) \mid e\in E \}$ \\
+    $G^f \gets (V, E^f)$ \tcp{residual graph}
+    \While{$t$ reachable from $s$ in $G^f$} {
+	    Choose an $(s,t)$ path in $G^f$ and maximize flow along the edges of the path \tcp{reverse flow cancels existing flow}
+	    $c^f \gets \begin{cases}
+	    c_{uv} - f_{uv} & [(u,v)\in E \wedge f_{uv}<c_{uv}] \\
+	    f_{vu} & [(v,u)\in E \wedge f_{vu}>0]
+	    \end{cases}$
+    }
+    \Return{$f$}
+    
+\end{algorithm}
+
+\begin{theorem}[Max-flow Min-cut Theorem]
+The size of the maximum flow in a network equals the capacity
+of the smallest $(s,t)$-cut $(L,R)$ (total capacity of the edges crossing the cut)
+\end{theorem}
+
+\begin{remark}
+$L$ contains all reachable vertices from $s$ in the final residual $G^f$ and $R$ contains all remaining vertices.
+\end{remark}
+
+
+\subsection{Duality}
+\begin{theorem}[Duality theorem]
+If a linear program has a bounded optimum, then so does its dual, and the
+two optimum values coincide.
+\end{theorem}
+
+
+\clearpage
 
 \begin{definition}[Duality] Given two forms of the same LP:
 \begin{itemize}
 \item Primal LP --- $\underset{\vec{x}}{\text{argmax}}\, \{\vec{c}^{\,\textsf{T}} \vec{x} \mid A\vec{x}\leq \vec{b} \}$
-\item Qual LP --- $\underset{\vec{y}}{\text{argmin}}\, \{\vec{b}^{\,\textsf{T}} \vec{y} \mid A^\textsf{T}\vec{y} = \vec{c}, \, \vec{y} \geq 0 \}$
+\item Dual LP --- $\underset{\vec{y}}{\text{argmin}}\, \{\vec{b}^{\,\textsf{T}} \vec{y} \mid A^\textsf{T}\vec{y} = \vec{c}, \, \vec{y} \geq 0 \}$
 \end{itemize}
 Then, 
 \begin{itemize}
@@ -417,13 +484,6 @@ Then,
 \begin{remark}
 Dual/Primal unbounded $\implies$ Primal/Dual infeasible.
 \end{remark}
-\subsection{LP Algorithm Overview}
-\begin{definition}[Simplex]
-A greedy algorithm that starts at a vexter and keeps moving to better vertices
-\end{definition}
-TODO
-
-\section{Network Flow}
 
 \end{document}
 

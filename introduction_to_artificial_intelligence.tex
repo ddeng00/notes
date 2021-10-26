@@ -457,18 +457,21 @@ $\forall x,y,z : P(x|z,y)=P(x|z)$
 Bayes' Net does not imply causation, only the lack thereof
 \end{remark}
 
+\subsection{Inference}
 \begin{definition}[Inference by Enumeration]
 General procedure:
 \begin{enumerate}
 \item Join Factors: $\forall r,t: P(r,t)=P(r)P(t|r)$
-\item Eliminate: $P(T)=\sum_r P(R,T)$
+\item Eliminate: $P(T)=\sum_r P(r,T)$
 \item Normalize: $P(Q|e_1,\dots,e_k)=\frac{P(Q,e_1,\dots,e_k)}{\sum_q P(Q,e_1,\dots,e_k)}$
 \end{enumerate}
-
-\begin{definition}[Variable Elimination] Faster than inference by enumeration via interleaving joining and marginalizing
-
 \end{definition}
-\end{definition}
+
+\begin{remark}
+Variable elimination is faster than inference by enumeration via interleaving joining and marginalizing.
+\end{remark}
+
+\subsection{Sampling}
 
 \end{document}
 
