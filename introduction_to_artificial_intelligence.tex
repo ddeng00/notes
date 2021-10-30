@@ -517,15 +517,14 @@ Variable elimination is faster than inference by enumeration via interleaving jo
 
 \subsection{D-Separation}
 \begin{definition}[Causal Chains] $X \to Y \to Z$ 
-$$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies \neg(X \indep Z)  \wedge  (X\indep Z \mid Y)$$
+$$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies X\indep Z \mid Y$$
 \end{definition}
 
 \begin{definition}[Common Causes] $X \leftarrow Y \to Z$
-\[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies \neg(X \indep Z)  \wedge  (X\indep Z \mid Y)       \]
+\[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies X\indep Z \mid Y       \]
 \end{definition}
 
-\begin{definition}[Common Effect] $X\to Z \leftarrow Y$
-\[  (X \indep Z)  \wedge    \neg (X\indep Z \mid Y)   \]
+\begin{definition}[Common Effect] $X\to Z \leftarrow Y \implies X \indep Z$
 \end{definition}
 \begin{definition}[D-Separation]
 $X \indep Y \mid Z$ \textit{iff} $X$ and $Y$ are ``d-separated'' by $Z$ (i.e., all undirected path from $X$ to $Z$ are inactive). A path is active if all triple it contains is active:
