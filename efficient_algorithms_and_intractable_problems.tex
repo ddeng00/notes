@@ -5,6 +5,7 @@
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{threeparttable, adjustbox, booktabs}
 \usepackage{outlines}
+\usepackage{multicol}
 
 \def\endproofmark{$\Box$}
 \newtheorem{theorem}{Theorem}[section]
@@ -30,15 +31,13 @@
 \maketitle
 
 \section{Complexity Analysis}
-\begin{definition}[Partial Sums]
+\subsection{Partial Sums}
 \begin{align*}
 S_k = \sum_{n=1}^k a_n = \frac{k}{2}(a_1+a_k) && \text{(Arithmetic Series)} \\
 S_k = \sum_{n=1}^k a_1(r)^n = a_1 \left(\frac{1-r^k}{1-r}\right) && \text{(Geometric Series)} \\
 \end{align*}
-\end{definition}
 
-
-\begin{definition}[Asymptotic Notations]
+\subsection{Asymptotic Relations}
 \begin{align*}
 f = O(g) \approx f(n) \leq c\cdot g(n) \\
 f = o(g) \approx f(n) < c\cdot g(n) \\
@@ -46,7 +45,6 @@ f = \Omega(g) \approx f(n) \geq c\cdot g(n) \\
 f = \omega(g) \approx f(n) > c\cdot g(n) \\
 f = \Theta(g) \approx f(n) = c\cdot g(n) \\
 \end{align*}
-\end{definition}
 
 \begin{remark}
 $O(i^n \mid i > 1) > O(n^j) > O(log^k n)$
@@ -62,6 +60,7 @@ T(n)=\begin{cases}
 \end{cases}
 \end{equation*}
 \end{theorem}
+\clearpage
 
 \section{Polynomial Interpolation}
 Given a degree $n$ polynomial $A(x)=a_0 + a_1 x + a_2 x^2+\cdots + a_{n} x^n$, the relationship between its values and coefficients can be represented by
@@ -90,24 +89,12 @@ $$M_n (\omega) = \begin{bmatrix}
 &&\vdots \\
 1 & \omega^{n-1} & \omega^{2(n-1)} & \cdots & \omega^{(n-1)(n-1)} \\
 \end{bmatrix}$$ \\
-where $\omega = e^{2\pi i / n}$ is the $n$th root of unity.
+where $\omega = e^{2\pi i / n}$ is the $n$th root of unity, and $M_n (\omega)$ is an unitary matrix whose columns forms the \textit{Fourier Basis}.
 \end{definition}
-
 \begin{remark}
-$M_n (\omega)$ is an unitary matrix whose columns forms the \textit{Fourier Basis}.
-\end{remark}
-
-\begin{lemma}
 $M_n^{-1} (\omega) = \frac{1}{n} \overline{M_n (\omega)} = \frac{1}{n} M_n (\omega^{-1})$
-\end{lemma}
-
-\begin{lemma} 
-$A(x)=A_{even}(x^2)+xA_{odd}(x^2)$ 
-\end{lemma}
-
-\begin{remark}
-If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_e(x^2)$ and $A_o(x^2)$ will only need to evaluate half the amount of points ($T(n) = 2T(n/2) + O(n) = O(n \log n)$).
 \end{remark}
+\clearpage
 
 \begin{algorithm}[ht]
     \caption{Fast Fourier transform}
@@ -122,6 +109,7 @@ If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_
     \eIf{$\omega = 1$}{
     	return $\vec{a}$
     } {
+    \tcp{$A(x)=A_{even}(x^2)+xA_{odd}(x^2)$}
     	$\langle A_e(0),\dots,A_{e}(n/2-1)\rangle \gets \mbox{FFT}(\langle a_0, a_2,\dots,a_{n-2}\rangle,\omega^2)$ \\
     	$\langle A_o(0),\dots,A_{o}(n/2-1)\rangle \gets \mbox{FFT}(\langle a_1, a_3,\dots,a_{n-1}\rangle,\omega^2)$ \\
     	\For {$j:=0$ to $n/2-1$}{
@@ -131,8 +119,11 @@ If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_
     }
     \Return {$\langle A(0), \dots, A(n-1)\rangle$}}
 \end{algorithm}
+\begin{remark}
+If $A$ is evaluated at points $\pm \omega_0,\dots, \pm \omega_{n/2-1}$, then $A_e(x^2)$ and $A_o(x^2)$ will only need to evaluate half the amount of points due to squaring.
+$$T(n) = 2T(n/2) + O(n) = O(n \log n)$$
+\end{remark}
 
-\clearpage
 \subsection{Applications of FFT}
 \begin{algorithm}[ht]
     \caption{Fast Polynomial Multiplication}
@@ -163,6 +154,7 @@ $corr(\vec{x},\vec{y})[k] = \sum x_i y_{i-k}$, which measures similarity.
     $Q(t) \gets X(t)Y(t)$ \quad \mbox{(Fast Polynomial Multiplication)}\\
     \Return {$\vec{q}$}
 \end{algorithm}
+\clearpage
 
 \section{Graphs}
 \begin{definition}[Graph] A graph is a pair $G=(V,E)$, typically represented by an adjacency matrix or an adjacency list.
@@ -181,7 +173,6 @@ Adjacency List & $\Theta(|V|+|E|)$ & $\Theta(degree(u))$ & $\Theta(degree(u))$ &
 \end{tabular}
 \end{table}
 
-\newpage
 \subsection{Depth-First Search}
 \begin{algorithm}[ht]
     \caption{Depth-first search}
@@ -222,6 +213,7 @@ Adjacency List & $\Theta(|V|+|E|)$ & $\Theta(degree(u))$ & $\Theta(degree(u))$ &
 }
 \end{algorithm}
 
+\subsubsection{Applications of DFS}
 \begin{algorithm}[ht]
     \caption{Topological sort.}
     
@@ -266,6 +258,7 @@ u \text{ is in sink SCC of graph }G &\Leftrightarrow u \text{ is in source SCC o
     \tcc{Can have aribitrary edge weights.}
     }
 \end{algorithm}
+\clearpage
 
 \subsection{Minimum Spanning Tree}
 \begin{algorithm}[ht]
@@ -287,6 +280,7 @@ u \text{ is in sink SCC of graph }G &\Leftrightarrow u \text{ is in source SCC o
     	\tcc{Sequentially adds the shortest edge that does not create a cycle. $O(|E|\log|V|)$ runtime if implemented using Union-Find data structure.}
     }
 \end{algorithm}
+\clearpage
 
 \section{Greedy Algorithm}
 \begin{definition}[Greedy Algorithm]
@@ -322,6 +316,7 @@ A greedy algorithm is one that builds the solution iteratively using a sequence 
     	$B \gets B \cup {i}$
     }   \Return{$B$}    }
 \end{algorithm}
+\clearpage
 
 \section{Union-Find}
 \begin{definition}[Amortized Analysis]
@@ -416,6 +411,34 @@ coefficients of the objective function by $-1$
 \1 (Signed $\leftrightarrow$ unsigned) $x \leftrightarrow x^+ - x^- \mid x^+,x^- \geq 0$
 \end{outline}
 
+\subsection{Duality}
+\begin{theorem}[Duality theorem]
+If a linear program has a bounded optimum, then so does its dual, and the
+two optimum values coincide (strong duality; weak duality states that primal opt. $\leq$ dual opt.).
+\end{theorem}
+
+\noindent
+\begin{minipage}{0.49\textwidth}
+Primal LP:
+\begin{align*}
+\max c^\textsf{T} x\\
+Ax \leq b  \\
+b \geq 0 \\
+\end{align*}
+\end{minipage}
+\noindent
+\begin{minipage}{0.49\textwidth}
+Dual LP:
+\begin{align*}
+\min y^\textsc{T} b\\
+y^\textsc{T} A \geq c^\textsc{T} \\
+y \geq 0 \\
+\end{align*}
+\end{minipage}
+\begin{remark}
+Dual/Primal unbounded $\implies$ Primal/Dual unfeasible.
+\end{remark}
+
 \subsection{Network Flow}
 \begin{definition}[Flow] Given a directed graph $G=(V,E)$ with capacities $c_e>0$ on all edges. The flow $f$ from source $s$ to sink $t$ satisfies the constraints:
 \begin{outline}[enumerate]
@@ -437,17 +460,12 @@ $$\sum_{(w,u)\in E} f_{wu} = \sum_{(u,z)\in E} f_{uz} \quad \text{(conservation 
     \KwIn{$G=(V,E),s,t$}
     \KwOut{$f$}
     
-    $f \gets 0$ \\
-	$E^f \gets E \cup \{ rev(e) \mid e\in E \}$ \\
-    $G^f \gets (V, E^f)$ \tcp{residual graph}
-    \While{$t$ reachable from $s$ in $G^f$} {
-	    Choose an $(s,t)$ path in $G^f$ and maximize flow along the edges of the path \tcp{reverse flow cancels existing flow}
-	    $c^f \gets \begin{cases}
-	    c_{uv} - f_{uv} & [(u,v)\in E \wedge f_{uv}<c_{uv}] \\
-	    f_{vu} & [(v,u)\in E \wedge f_{vu}>0]
-	    \end{cases}$
+    \tcp{$G_f :=$ residual graph (also contains back-edges)}
+    \While{$\exists$ an augmenting path in $G_f$}{
+    	Find an arbitrary augmenting path $P$ from $s$ to $t$ \\
+    	Augment flow $f$ along $P$ \\
+    	Update $G_f$ \\
     }
-    \Return{$f$}
     
 \end{algorithm}
 
@@ -460,31 +478,34 @@ of the smallest $(s,t)$-cut $(L,R)$ (total capacity of the edges crossing the cu
 $L$ contains all reachable vertices from $s$ in the final residual $G^f$ and $R$ contains all remaining vertices.
 \end{remark}
 
-
-\subsection{Duality}
-\begin{theorem}[Duality theorem]
-If a linear program has a bounded optimum, then so does its dual, and the
-two optimum values coincide.
+\subsection{Zero-Sum Game}
+\begin{theorem}[Min-Max Theorem] For zero-sum games, there exists an equilibrium such that
+\[\underset{x}{\max}\, \underset{y}{\min}\, \sum_{i,j}G_{i,j}x_i y_j = \underset{y}{\min}\,\underset{x}{\max}\,  \sum_{i,j}G_{i,j}x_i y_j\]
 \end{theorem}
+\begin{remark}
+To convert game strategies to LP:
+\begin{itemize}
+\item $\underset{x}{\max}\, \underset{y}{\min}\, \sum_{i,j}G_{i,j}x_i y_j \implies$
+\begin{align*}
+\max z \\
+\forall y, \sum_{i,j}G_{i,j}x_i y_j \geq z \\
+\sum_i x_i = 1 \\
+\forall i, x_i \geq 0 \\
+\end{align*}
 
-
+\item $\underset{y}{\min}\,\underset{x}{\max}\,  \sum_{i,j}G_{i,j}x_i y_j \implies$
+\begin{align*}
+\min w \\
+\forall x, \sum_{i,j}G_{i,j}x_i y_j \leq w \\
+\sum_j y_j = 1 \\
+\forall j, y_j \geq 0 \\
+\end{align*}
+\end{itemize}
+It is apparent that the two LPs are dual; therefore, the equilibrium can be found in polynomial time via LP.
+\end{remark}
 \clearpage
 
-\begin{definition}[Duality] Given two forms of the same LP:
-\begin{itemize}
-\item Primal LP --- $\underset{\vec{x}}{\text{argmax}}\, \{\vec{c}^{\,\textsf{T}} \vec{x} \mid A\vec{x}\leq \vec{b} \}$
-\item Dual LP --- $\underset{\vec{y}}{\text{argmin}}\, \{\vec{b}^{\,\textsf{T}} \vec{y} \mid A^\textsf{T}\vec{y} = \vec{c}, \, \vec{y} \geq 0 \}$
-\end{itemize}
-Then, 
-\begin{itemize}
-\item Weak duality --- $\text{OPT}(P) \leq \text{OPT}(D)$
-\item Strong duality --- Primal LP is bounded and feasible $\implies$ Dual LP is bounded and feasible $\wedge$ $\text{OPT}(P) = \text{OPT}(D)$
-\end{itemize}
-\end{definition}
-\begin{remark}
-Dual/Primal unbounded $\implies$ Primal/Dual infeasible.
-\end{remark}
-
+\section{Multiplicative Weight Updates}
 \end{document}
 
 
