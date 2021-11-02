@@ -385,6 +385,170 @@ Fill up the look-up table iteratively instead of recursively
 \begin{remark}
 Bottom-up DP sometimes have better memory
 \end{remark}
+
+\subsection{Bellman-Ford}
+
+\begin{definition}[Bellman-Ford]
+An algorithm for finding the SSSP on a directed graph with potentially negative weights. The algorithm defines a function $f(t,k) :=$ the length of the shortest path from $s$ to $t$ using $\leq k$ edges, and wishes to solve for $f(t,n-1)$. The recurrence relation of the algorithm is
+\[
+f(t,k) = \begin{cases}
+\infty & k=0,t\neq s\\
+0 & k=0, t = s \\
+\min \begin{cases}
+f(t,k-1) \\
+\min_{(v,t)\in E} w(v,t)+f(v,k-1) \\
+\end{cases} & else
+\end{cases}
+\]
+\end{definition}
+
+\begin{remark}
+Negative cycle detection: $\exists$ negative cycle $\Leftrightarrow$ $\exists v, f(v,n)<f(v,n-1)$
+\end{remark}
+
+\begin{algorithm}
+    \caption{Bellman-Ford}
+    \SetKwFunction{FFT}{FFT}  
+    \SetKwProg{Fn}{Function}{:}{}  
+    
+    \DontPrintSemicolon
+    \KwIn{$G, s$.}
+    
+    initialize $T[1,\dots,n]$ to all $\infty$ \\
+    $T[s] \gets 0$ \\
+    \For{$k = 1$ to $n-1$} {
+    	\ForEach{$(u,v)\in E$} {
+    		$T[v] \gets \min \begin{cases}
+    			T[v]\\
+    			w(u,v) + T(u) \\
+    		\end{cases}
+    		$
+    	}
+    } \Return{$T$}
+\end{algorithm}
+
+\begin{itemize}
+\item Memory: $O(n)$ with bottom-up
+\item Runtime: $O(n^2 +mn)$
+\end{itemize}
+
+
+\subsection{Floyd-Warshall}
+\begin{definition}[Floyd-Warshall]
+An algorithm for finding the all pairs shortest path (APSP) on a directed graph. Assume the graph is complete (pretend $w(e)=\infty$ for all $e \not\in E$), the algorithm defines a function $f(i,j,k) :=$ the length of the shortest path from $i$ to $j$ when all intermediate vertices in the path must be in $\{1,\dots,k\}$.  The recurrence relation is
+\[
+f(i,j,k) = \begin{cases}
+w(i,j) & k=0, i \neq j \\
+0 & k=0, i = j \\
+\min\begin{cases}
+f(i,j,k-1) \\
+f(i,k,k-1) + f(k,j,k-1) \\
+\end{cases} & else
+\end{cases}
+\]
+\end{definition}
+
+\begin{algorithm}
+    \caption{Floyd-Warshall}
+    \SetKwProg{Fn}{Function}{:}{}
+    %\SetKwFunction{•}{•}  
+    
+    \DontPrintSemicolon
+    \KwIn{G}
+    %\KwOut{•}
+    
+    initialize $T[1\dots n][1\dots n]$ such that $T[i][j]\gets w(i,j)$ for all $i,j$ \\
+    \For{$k=1$ to $n$} {
+    	\For{$i = 1$ to $n$} {
+    		\For{$j = 1$ to $n$} {
+    			$T[i][j] \gets \begin{cases}
+    			T[i][j] \\
+    			T[i][k] + T[k][j] \\
+    			\end{cases}
+    			$
+    		}
+    	}
+    } \Return{$T$}
+\end{algorithm}
+
+\begin{itemize}
+\item Memory: $O(n^2)$
+\item Runtime: $O(n^3)$
+\end{itemize}
+
+\subsection{Longest Increasing Subsection}
+\begin{definition}[LIS]
+Define $f(last, i) :=$ length of the LIS of $A[i \dots n]$ such that all values used are $> A[last]$. The recurrence relation is
+\[
+f(last, i) = \begin{cases}
+0 & i = n+1 \\
+f(last, i+1) & A[i] \leq A[last] \\
+\max \begin{cases}
+f(last, i+1) \\
+f(i, i+1) + 1 \\
+\end{cases}
+\end{cases}
+\]
+\end{definition}
+
+\begin{itemize}
+\item Memory: $O(n)$
+\item Runtime: $O(n^2)$
+\end{itemize}
+
+\subsection{Knapsack}
+\begin{definition}[Knapsack]
+Given an array $A[1\dots n]$ of items, each being a (weight, value) pair. Given a knapsack that can hold $\leq W$ weight, find the maximum value containable in the knapsack. The algorithm for solving this problem defines a function $f(i, C) := $ maximum value we can pack among $A[i\dots n]$ with capacity $C$. The recurrence relation is
+\[
+f(i,C) = \begin{cases}
+0 & i = n+1 \\
+f(i+1, C) & w[i] > C \\
+\max \begin{cases}
+f(i+1, C) \\
+f(i+1, C - w[i]) + v[i] \\
+\end{cases} & else
+\end{cases}
+\]
+\end{definition}
+
+\begin{itemize}
+\item Memory: $O(W)$
+\item Runtime: $O(nW)$ \qquad *pseudopolynomial
+\end{itemize}
+
+\subsection{Traveling Salesman Problem}
+\begin{definition}[Traveling Salesman Problem]
+Given $n$ locations with distances $D[i][j]$. The traveling salesman wishes to visit all locations, starting at $1$, while minimizing total travel distance. The DP algorithm defines a function $f(i,S) :=$ minimum traveling distance to visit all locations in $S$ when starting at $1$. The recurrence relation is
+\[
+f(i,S) = \begin{cases}
+0 & S\neq \emptyset \\
+\min_{x\in S} \left(D[i][x]+f\left(x, S \setminus \{x\}\right)\right) & else
+\end{cases}
+\]
+\end{definition}
+
+\begin{itemize}
+\item Memory: $O(\sqrt{n} \cdot 2^n)$
+\item Runtime: $O(n^2 \cdot 2^n)$
+\end{itemize}
+
+
+\subsection{Matrix Chain Multiplication}
+\begin{definition}[Matrix Chain Multiplication]
+Given $s_1,\dots,s_{n+1}$ such that $A_i$ is a $s_i \times s_{i+1}$ matrix, and we want to find the minimum number of flops to compute $A_1 \times \dots \times A_n$. The DP algorithm defines a function $f(i,j):=$ minimum number of flops to compute $A_i \times \dots \times A_j$. The recurrence relation is
+\[
+f(i,j) = \begin{cases}
+0 & i = j \\
+\min_{i\leq k\leq j} \left(f(i,k) + f(k+1, j) + s_i s_{j+i} s_{k+1}  \right) & else \\
+\end{cases}
+\]
+\end{definition}
+
+\begin{itemize}
+\item Memory: $O(n^2)$
+\item Runtime: $O(n^3)$
+\end{itemize}
+
 \clearpage
 
 \section{Linear Programming}
@@ -506,6 +670,68 @@ It is apparent that the two LPs are dual; therefore, the equilibrium can be foun
 \clearpage
 
 \section{Multiplicative Weight Updates}
+\begin{definition}[Online Decision Making]
+A problem where one chooses to follow expert $i^{(t)}$ out of $n$ experts on day $t \in \{1,\dots,T\}$, who incurs a loss of $l_i^{(t)}$ on day $t$ ($\forall i, t, l_i^{(t)}$ is bounded by $[0,1]$; range can be normalized), with the goal of minimizing the total loss 
+\[L := \sum_{t=1}^T l_i ^{(t)}\]
+Realistically, the problem aims to minimize the regret
+\[R := L - L^* \qquad \left(  L^* := \min_{i\in [n]} \sum_{t=1}^T l_i^{(t)}    \right)\]
+\end{definition}
+
+\begin{remark}
+It would be trivial to define the offline optimum $L^*$ as $\sum_{t=1}^T \min_{i \in [n]} l_i^{(t)}$ in minimizing regret.
+\end{remark}
+
+\subsection{Hedge/MWU}
+\begin{algorithm}
+    \caption{Hedge/MWU}
+    
+	\tcc{Defined expected loss on day $t$ to be $L_t := \left<x^{(t)}, l^{(t)}\right>$ and the total loss to be $L := \sum_{t=1}^{T} L_t$, where $x^{(t)}$ is the probability distribution of choosing any expert on day $t$.}  
+    
+    \DontPrintSemicolon
+    \KwIn{$\epsilon \in [0, \frac{1}{2}]$.}
+    
+    $\forall i \in [n], w_i^{(1)} \gets 1$ \\
+    $x_i^{(t)} \gets \frac{w_i^{(t)}}{W^{(t)}} \qquad$ \tcp{$\left( W^{(t)} := \sum_{j=1}^{n} w_j^{(t)} \right)$}
+    $w_i^{(t+1)} \gets w_i^{(t)} (1-\epsilon)^{l_i^{(t)}}$
+\end{algorithm}
+
+\begin{lemma}
+$W^{(T+1)} \geq (1-\epsilon)^{L^*}$
+\end{lemma}
+
+\begin{proof}
+\begin{align*}
+W^{(T+1)} &\geq w_{i^*}^{(T+1)} \\
+& = \prod_{t+1}^T (1-\epsilon)^{l_{i^*}^{(t)}} \\
+& = (1-\epsilon)^{L^*}
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+$W^{(T+1)} \leq n \cdot \prod_{t=1}^{T} (1 - \epsilon \cdot L_t)$
+\end{lemma}
+
+\begin{proof}
+TODO
+\end{proof}
+
+\begin{theorem}
+Hedge$(\epsilon)$ achieves $\mathbb{E}[R] \leq \epsilon \cdot T + \frac{\ln n}{\epsilon}$ (or $\mathbb{E}[R] \leq 2 \sqrt{T \ln n}$ if $\epsilon = \sqrt{\frac{\ln n}{T}}$).
+\end{theorem}
+
+\begin{proof}
+\begin{align*}
+& (1-\epsilon)^{L^*} \leq n \cdot \prod_{t=1}^{T} (1 - \epsilon \cdot L_t) \\ 
+\implies & L^* \ln (1-\epsilon) \leq \ln n + \sum _{t+1}^n \ln (1 - \epsilon \cdot L_t) \\
+\implies & L^* (-\epsilon-\epsilon^2) \leq \ln n - \epsilon \sum_{t=1}^T L_t \\
+\implies & \sum_{t=1}^T L_t - L^* \leq \frac{\ln n}{\epsilon} + \epsilon \cdot L^* \\
+\implies & \mathbb{E}[R] \leq \epsilon \cdot T + \frac{\ln n}{\epsilon}
+\end{align*}
+\end{proof}
+
+
+\begin{remark} $\forall z \in [0,\frac{1}{2}], -z-z^2 \leq \ln (1-z) \leq -z$
+\end{remark}
 \end{document}
 
 
