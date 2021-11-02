@@ -516,6 +516,13 @@ f(i+1, C - w[i]) + v[i] \\
 \item Runtime: $O(nW)$ \qquad *pseudopolynomial
 \end{itemize}
 
+\begin{remark}
+For knapsack problems with replacement, the recurrence relation is instead
+\[
+f(C) = \max_{i} \left(f(C - w[i]) + v[i]\right)
+\]
+\end{remark}
+
 \subsection{Traveling Salesman Problem}
 \begin{definition}[Traveling Salesman Problem]
 Given $n$ locations with distances $D[i][j]$. The traveling salesman wishes to visit all locations, starting at $1$, while minimizing total travel distance. The DP algorithm defines a function $f(i,S) :=$ minimum traveling distance to visit all locations in $S$ when starting at $1$. The recurrence relation is
