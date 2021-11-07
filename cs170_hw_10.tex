@@ -1,0 +1,65 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{Title Here}
+\author{Daniel Deng}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Study Group}
+\begin{enumerate}
+\item[(a)] None
+\item[(b)] Yes
+\end{enumerate}
+\clearpage
+
+\section{How to Gamble with Little Regret}
+\begin{enumerate}
+\item[(a)] Since the strategy is deterministic, the best adversal action would be to have the expert we choose at each time step have a cost of 1, and all others have a cost of 0. This would cause
+\[
+\sum_{t=1}^T c_{i(t)}^t = T
+\]
+since we are guaranteed to lose maximally in the interest of the casino. However, in order to minimze the regret, the best player strategy would be to pick a different expert at each time step, which forces each expert to at least be chosen every $\frac{T}{n}$ time steps. Therefore, the expected value of the second term is
+\[
+\min_{1\leq i \leq n} \sum_{t=1}^T c_i^t = \frac{T}{n}
+\]
+Overall, assuming optimal strategies for both the player and the casino,
+\[
+\max_C \mathbb{E}[R] = 1 - \frac{1}{n}
+\]
+
+\item[(b)] Given a fix mixed strategy, the expected value of a player's loss at any given day is
+\[
+\mathbb{E}[c^t] = \sum_{i = 1}^n p_i c_i^t
+\]
+In order to maximize the player loss, while minimizing lossed on the experts, the casino will scale the loss value of each expert according to their chance of being picked by the player (i.e., higher chance of being picked $\to$ higher loss). Therefore, the expected value of the regret would be
+\[
+\max_C \mathbb{E}[R] = \sum_{i=1}^n p_i^2 - \min_{1\leq j\leq n} p_j^2
+\]
+
+\end{enumerate}
+\end{document}
+
+
