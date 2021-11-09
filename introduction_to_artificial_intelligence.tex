@@ -472,6 +472,26 @@ General procedure:
 Variable elimination is faster than inference by enumeration via interleaving joining and marginalizing.
 \end{remark}
 
+\subsection{D-Separation}
+\begin{definition}[Causal Chains] $X \to Y \to Z$ 
+$$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies X\indep Z \mid Y$$
+\end{definition}
+
+\begin{definition}[Common Causes] $X \leftarrow Y \to Z$
+\[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies X\indep Z \mid Y       \]
+\end{definition}
+
+\begin{definition}[Common Effect] $X\to Z \leftarrow Y \implies X \indep Z$
+\end{definition}
+\begin{definition}[D-Separation]
+$X \indep Y \mid Z$ \textit{iff} $X$ and $Y$ are ``d-separated'' by $Z$ (i.e., all undirected path from $X$ to $Z$ are inactive). A path is active if all triple it contains is active:
+\begin{itemize}
+\item Causal chain $A\to B\to C$ where $B$ is unobserved
+\item Common cause $A\leftarrow B \to C$ where $B$ is unobserved
+\item Common effect $A \to B \leftarrow C$ where $B$ or one of its descendants is observed
+\end{itemize}
+\end{definition}
+
 \subsection{Sampling}
 \begin{algorithm}
     \caption{Sampling.}
@@ -509,32 +529,14 @@ Variable elimination is faster than inference by enumeration via interleaving jo
 		} \Return{$(x_1, x_2,\dots,x_n),w$}
     }
     \Fn{\Gibbs}{
-    
-    
-    
+    	\tcc{keep track of a full instantiation $x_1,\dots,x_n$. Start with an arbitrary
+instantiation consistent with the evidence. Sample one variable at a time, conditioned on
+all the rest, but keep evidence fixed. Keep repeating this for a long time.}
     }
 \end{algorithm}
+\clearpage
 
-\subsection{D-Separation}
-\begin{definition}[Causal Chains] $X \to Y \to Z$ 
-$$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies X\indep Z \mid Y$$
-\end{definition}
-
-\begin{definition}[Common Causes] $X \leftarrow Y \to Z$
-\[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies X\indep Z \mid Y       \]
-\end{definition}
-
-\begin{definition}[Common Effect] $X\to Z \leftarrow Y \implies X \indep Z$
-\end{definition}
-\begin{definition}[D-Separation]
-$X \indep Y \mid Z$ \textit{iff} $X$ and $Y$ are ``d-separated'' by $Z$ (i.e., all undirected path from $X$ to $Z$ are inactive). A path is active if all triple it contains is active:
-\begin{itemize}
-\item Causal chain $A\to B\to C$ where $B$ is unobserved
-\item Common cause $A\leftarrow B \to C$ where $B$ is unobserved
-\item Common effect $A \to B \leftarrow C$ where $B$ or one of its descendants is observed
-\end{itemize}
-\end{definition}
-
+\section{Decision Networks}
 
 \end{document}
 
