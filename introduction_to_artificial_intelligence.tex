@@ -481,7 +481,7 @@ $$P(x,y,z) = P(x)P(y \mid x)P(z \mid y)\implies X\indep Z \mid Y$$
 \[   P(x,y,z,) = P(y)P(x \mid y) P(z \mid y) \implies X\indep Z \mid Y       \]
 \end{definition}
 
-\begin{definition}[Common Effect] $X\to Z \leftarrow Y \implies X \indep Z$
+\begin{definition}[Common Effect] $X\to Z \leftarrow Y \implies X \indep Y$
 \end{definition}
 \begin{definition}[D-Separation]
 $X \indep Y \mid Z$ \textit{iff} $X$ and $Y$ are ``d-separated'' by $Z$ (i.e., all undirected path from $X$ to $Z$ are inactive). A path is active if all triple it contains is active:
@@ -537,6 +537,93 @@ all the rest, but keep evidence fixed. Keep repeating this for a long time.}
 \clearpage
 
 \section{Decision Networks}
+\begin{definition}[Decision Networks]
+A combination of both Bayes' nets and expectimax that has three types of nodes: 1) chance nodes, 2) action nodes (act as observed evidence and cannot have parents), and 3) utility nodes (depends on both action and chance nodes). The goal of decision networks is to identify the action $a$ that yields the maximum expected utility (MEU) given evidence $e$ and an instance/state $s$ for the chance nodes
+\[
+\mathrm{MEU}(e) = \max_a \mathrm{EU}(a|e) = \max_a \sum_{s} P(s|e)\,U(s,a)
+\]
+\end{definition}
+
+\begin{remark}
+A decision network can be represented as an outcome tree (TODO: example)
+\end{remark}
+
+\subsection{Value of Perfect Information}
+\begin{definition}[Value of Perfect Information]
+The value of perfect information (VPI) quantifies the amount an agent's maximum expected utility is expected to increase if it observes some new evidence.
+\[
+\mathrm{VPI}(E'|e) = \mathrm{MEU}(e,E') - \mathrm{MEU}(e) = \sum_{e'} P(e' | e) \mathrm{MEU}(e,e') - \mathrm{MEU}(e)
+\]
+
+VPI has several important properties:
+\begin{itemize}
+\item Nonnegativity:
+\[
+(\forall E', e) \mathrm{VPI}(E'|e) \geq 0
+\]
+\item Nonadditivity: (intuitively, observing $E_j$ might chance how much we care about $E_k$)
+\[
+\mathrm{VPI}(E_j, E_k | e) \neq \mathrm{VPI}(E_j | e) + \mathrm{VPI}(E_k | e)
+\]
+\item Order-independence: 
+\[
+\mathrm{VPI}(E_j,E_k|e) = \mathrm{VPI}(E_j|e)+\mathrm{VPI}(E_k|e,E_j) = \mathrm{VPI}(E_k|e)+\mathrm{VPI}(E_j|e,E_k)
+\]
+\end{itemize}
+\end{definition}
+\clearpage
+
+\section{Markov Models}
+\begin{definition}[Markov Models]
+The Markov model is analogous to a chain-like, infinite-length Bayes' net that is time-dependent. The model assumes that:
+\begin{enumerate}
+\item The memoryless property holds at all timesteps, and
+\item The transition model is stationary (i.e., for all values of $i$, $P(W_{i+1}|W_i)$ is identical)
+\end{enumerate}
+\end{definition}
+
+\begin{algorithm}
+    \caption{Mini-forward algorithm.}
+
+    \SetKwProg{Fn}{Function}{:}{} 
+    %\SetKwFunction{•}{•}   
+    
+    \DontPrintSemicolon
+    $P(W_{i+1}) \gets \sum_{w_i} P(W{i+1}|w_i)P(w_i)$
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Finding stationary distribution.}
+
+    \SetKwProg{Fn}{Function}{:}{} 
+    %\SetKwFunction{•}{•}   
+    
+    \DontPrintSemicolon
+    \KwOut{The stationary distribution $W_t$}
+	    
+    Given constraint $\sum_{w_t} = 1$, solve system of equations $P(w_i^t) = \sum_{w_j^t} P(w_i^t | w_j^t) P(w_j^t)$ \tcp{$w^t = w^{t+1}$}
+\end{algorithm}
+
+\begin{definition}[Hidden Markov Models]
+Hidden Markov Model
+\begin{itemize}
+\item Sensor model $P(F_i | W_i)$ is stationary
+\item Belief distribution: $B(W_i) = P(W_i | f_1, \dots, f_i), B'(W_i) = P(W_i | f_1, \dots, f_{i-1})$
+\end{itemize}
+\end{definition}
+
+\begin{algorithm}
+    \caption{Forward algorithm.}
+
+    \SetKwProg{Fn}{Function}{:}{} 
+    %\SetKwFunction{•}{•}   
+    
+    \DontPrintSemicolon
+    
+    $B'(W_{i+1}) \gets \sum_{w_i} P(W_{i+1} | w_i)B(w_i)$ \tcp{time elapse update}
+    $B(W_{i+1}) \propto P(f_{i+1} | W_{i+1}) B'(W_{i+1})$ \tcp{observation update}
+    
+\end{algorithm}
 
 \end{document}
 
