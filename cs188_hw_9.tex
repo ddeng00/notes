@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{CS 188 HW 9 Challenge Question}
+\author{Daniel Deng, SID 3034543526}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+Collaborator: None
+
+\section{Naive Bayes and Perceptron}
+\begin{enumerate}
+\item[7.1)] C,D,E,F
+\begin{align*}
+P(Y=spam | W = \{berkeley, rules\}) = P(Y=spam)(1/6)(1/8) = \tfrac{P(Y=spam)}{48} \\
+P(Y=ham | W = \{berkeley, rules\}) = P(Y=ham)(1/8)(1/12) = \tfrac{1-P(Y=spam)}{96} \\
+\implies P(Y=spam) > 1/3 \text{ to be classified as spam}
+\end{align*}
+
+\item[7.2)] F,F,A,E
+\begin{align*}
+N_{spam} = 12 \\
+N_{ham} = 14 \\
+P(W=warning|Y=spam) = 1/12 \\
+P(W=social|Y=ham) = 1/14 \\
+P(W=office|Y=ham) = 0 \\
+P(Y=ham) = 2/3
+\end{align*}
+
+\item[7.3)]
+\begin{align*}
+P(W=warning|Y=spam) = \frac{3}{12+2V} \\
+P(W=social|Y=ham) = \frac{3}{14+2V} \\
+P(Y=ham) = \frac{4}{7}
+\end{align*}
+
+\item[7.4)] B. 0.7 is the only likely one in the list because increasing $k$ to fix overfitting, which naturally will decrease the accuracy of model, but not to an extreme as increasing $k$ causes all probabilities to converge uniformly (i.e., half-half split between spam and ham; hence 0.1 is not possible). 
+
+\item[7.5)] 
+\begin{enumerate}
+\item[i)] D. 2 choices for $Y$, $V$ choices for $W_i$ and $W_{i-1}$
+\item[ii)] C. The new model will have more accuracy on the test data because it has more evidence variables it can use for determination.
+\end{enumerate}
+
+\item[7.6)] Since the perceptron will classify the data correctly as A (due to highest activation score of 3), no changes will be made to the weights.
+\begin{align*}
+w_A = [1,2]\\
+w_B = [2,0]\\
+w_C = [2,-1]
+\end{align*}
+
+\item[7.7)] The perceptron will classify the data entry as B (activation score of 2), which is incorrect given the real label. Therefore, $w_B$ and $w_C$ will be updated
+\begin{align*}
+w_A = [1,2] \\
+w_B = [-1,0] - [-2,1] = [1,-1]\\
+w_C = [2,-2] + [-2,1] = [0,-1]\\
+\end{align*}
+
+\item[7.8)] C. Only $w_B$ will converge by not changing throughout the training, whereas $w_A$ and $w_C$ will alternate between values. This can be seen by performing 1 iteration of training on the dataset
+\begin{enumerate}
+\item $w_A = [1,0], w_B = [1,1], w_C = [3,0]$ (initial condition)
+\item $w_A = [2,1], w_B = [1,1], w_C = [2,-1]$ (incorrectly identified A as C)
+\item $w_A = [2,1], w_B = [1,1], w_C = [2,-1]$ (correctly identified B)
+\item $w_A = [2,1], w_B = [1,1], w_C = [2,-1]$ (correctly identified C)
+\item $w_A = [1,0], w_B = [1,1], w_C = [3,0]$ (incorrectly identified A as C; return to initial condition)
+\end{enumerate}
+
+\end{enumerate}
+\end{document}
+
+

@@ -12,7 +12,10 @@
 \newtheorem{definition}{Definition}[section]
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
+
 \newcommand{\indep}{\perp \!\!\! \perp}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
 
 \renewcommand\arraystretch{1.5}
 
@@ -624,6 +627,104 @@ Hidden Markov Model
     $B(W_{i+1}) \propto P(f_{i+1} | W_{i+1}) B'(W_{i+1})$ \tcp{observation update}
     
 \end{algorithm}
+
+\begin{definition}[Particle Filtering] Sample -> update -> calculate probability -> re-sample
+\end{definition}
+\clearpage
+
+\section{Machine Learning}
+\subsection{Naive Bayes}
+\begin{definition}[Naive Bayes Classifier]
+A model for solving classification problems that makes the assumption that each feature $F_i$ is conditionally independent of all other features given the class label, which is a trade-off between complexity and statistical efficiency.
+\[
+\mathrm{prediction}(F) = \argmax_{y_i} P(Y=y_i) \prod_j P(F_j=f_j | Y = y_i)
+\]
+\end{definition}
+
+\begin{definition}[Maximum Likelihood Estimation (MLE)]
+Assume all samples $x_i$ are independent and identically distributed (i.i.d.) with a distribution parametrized by an unknown $\theta$. Based on the assumptions, we wish to find the maximum likelihood
+\[
+\argmax_\theta \mathcal{L}(\theta) = \argmax_\theta \prod_{i=1}^N P_\theta(x_i)
+\]
+which satisfies gradient optimization
+\[
+\frac{\partial}{\partial\theta} \mathcal{L}(\theta) = 0
+\]
+Under the Naive Bayes model with Bernoulli feature distributions, the MLE for any outcome $x$ is
+\[
+P_{MLE}(x) = \frac{count(x)}{N}
+\]
+\end{definition}
+
+\begin{definition}[Laplace Smoothing] A method for mitigating overfitting.
+\begin{align*}
+P_{LAP,k}(x) = \frac{count(x)+k}{N+k|X|}\\
+P_{LAP,k}(x|y) = \frac{count(x,y)+k}{count(y)+k|X|}
+\end{align*}
+\end{definition}
+
+\subsection{Perceptron}
+\begin{definition}[Linear Classifier]
+Method for binary classification (i.e., label has two possibilities positive and negative) using a linear combination of weighted features.
+\begin{align*}
+\mathrm{activation}_w(x) = \left< w,f(x) \right> = \lVert w \rVert \lVert f(x) \rVert \cos(\theta) \\
+\mathrm{classify}(x) = \begin{cases}
++ & \mathrm{activation}_w(x) > 0 \\
+- & \mathrm{activation}_w(x) < 0
+\end{cases} = \begin{cases}
++ & \cos(\theta) > 0 \\
+- & \cos(\theta) < 0 
+\end{cases} = \begin{cases}
++ & \theta < \frac{\pi}{2} \\
+- & \theta > \frac{\pi}{2}
+\end{cases}
+\end{align*}
+\end{definition}
+
+\begin{remark}
+$\mathrm{activation}_w(x) = 0 \implies$ decision boundary (hyperplane)
+\end{remark}
+
+\begin{algorithm}
+    \caption{Binary Perceptron}
+
+    \SetKwProg{Fn}{Function}{:}{} 
+    %\SetKwFunction{•}{•}   
+    
+    \DontPrintSemicolon
+    
+    initialize $\forall w_i \gets 0$ \\
+    \While{$y = \mathrm{classify}(x) \neq$ true label $y^*$} {
+    		$w \gets w + \left< y^*,f \right>$
+    }
+    
+\end{algorithm}
+
+\begin{definition}[Multiclass Decision] Given a weight vector for $w_y$ for each class $y$, the classification is
+\[
+\mathrm{classify}(x) = \argmax_y \left< w_y, f(x) \right>
+\]
+\end{definition}
+
+\begin{algorithm}
+    \caption{Multiclass Perceptron}
+
+    \SetKwProg{Fn}{Function}{:}{} 
+    %\SetKwFunction{•}{•}   
+    
+    \DontPrintSemicolon
+    
+    initialize $\forall w_{y,i} \gets 0$ \\
+    \While{$y = \mathrm{classify}(x) \neq$ true label $y^*$} {
+    		$w_y \gets w_y - f(x)$ \\
+    		$w_{y^*} \gets w_{y^*} + f(x)$
+    }
+    
+\end{algorithm}
+
+\begin{definition}[Probabilistic Decision]
+
+\end{definition}
 
 \end{document}
 
