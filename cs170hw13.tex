@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx,enumerate,amsthm}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{threeparttable, adjustbox, booktabs}
+
+\def\endproofmark{$\Box$}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\arraystretch{1.5}
+
+%-----------------------------------------------------------------------------------
+
+% Title information
+\title{CS 170 HW 13}
+\author{Daniel Deng, SID 3034543526}
+\pagestyle{myheadings}
+\date{}
+
+%-----------------------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Study Group}
+\begin{enumerate}
+\item[(a)] None
+\item[(b)] Yes
+\end{enumerate}
+\clearpage
+
+\section{One-Sided Error and Las Vegas Algorithms}
+\begin{enumerate}
+\item[(a)]
+Since the randomized algorithm $R(x)$ runs in polynomial time in the size of the input, the number of coin-flips must also be at most polynomial in the size of the input. Therefore, we can modify each instance of the $R(x)$ algorithm as a deterministic $A(x,r)$ where $r$ is a poly-length sequence of coin flips. Now, consider a nondeterministic Turing machine that runs $A(x,r)$ with all possible sequences of coin flips. If the correct answer to the RP instance is ``No'', then all instances of $A(x,r)$ will return ``No''. If the correct answer is ``Yes'', at least half of the instances of $A(x,r)$ will return ``Yes''. Therefore, since at all times some computation path of the nondeterministic returns an accepting state for RP, $RP \subseteq NP$.
+
+\item[(b)]
+Given that the problem has a ZPP algorithm, we construct a new algorithm that runs the ZPP algorithm on a given input, but terminates after running for a fixed amount of time and return ``No'' as a default. Under this scheme, if the true answer is ``No'', then the algorithm will always return ``No'' correctly; if the true answer is ``Yes'', then the algorithm will return ``Yes'' correctly as long as the algorithm completes running in the allotted time. We can find the termination time that guarantees that the algorithm return ``Yes'' correctly with probability greater than 1/2 using Markov's inequality. 
+
+Let $X = $ the runtime of the ZPP algorithm (non-negative), and $\mathbb{E}[X]$ is polynomial in the size of the input. Using Markov's inequality, we have
+\[
+P(X>\lambda) < \frac{\mathbb{E}[X]}{\lambda}
+\]
+Substitute $\lambda = 2\mathbb{E}[X]$, we get
+\[
+P(X > 2\mathbb{E}[X]) < \frac{1}{2}
+\]
+This inequality reveals that as long as we set the termination time to be double the expected runtime, the probability of the algorithm terminated without outputting a ``Yes'' is less than 1/2, which means that the probability the algorithm returns ``Yes'' correctly is greater than 1/2.
+
+Therefore, we can always construct a RP algorithm from a ZPP algorithm, and that if a problem has a ZPP algorithm, then it has an RP algorithm.
+\end{enumerate}
+\clearpage
+
+\section{Quick Select}
+\begin{enumerate}
+\item[(a)] QuickSelect finds the $k$th smallest element in $A$. Since $X_{ij}$ is an indicator R.V.
+\[
+\mathbb{E}[X_{ij}] = Pr(X_{ij} = 1)
+\]
+\textbf{Case 1}: $k \leq i < j$. If $p < k$ or $p > j$, $k, i, j$ will be placed on the same side for the next step, and $i,j$ might still be compared. If $k \leq p < i$, $i, j$ will both be placed in the right side and never looked at again. This leaves $i\leq p \leq j$, and we know that $i$ and $j$ are compared only if the pivot is $i$ or $j$. Therefore, $i$ and $j$ must be selected as pivots in the range $[k,j]$ for them to be ever compared.
+\[
+Pr(X_{ij} = 1 \mid k \leq i < j) = \frac{2}{j-k+1}
+\]
+
+
+\textbf{Case 2}: $i < k < j$: Picking pivot outside $[i,j]$ will keep $i,j,k$ on the same side and continue to be evaluated. Within the range $[i,j]$, $i,j$ will only be compared if either $i$ or $j$ is selected as the pivot.
+\[
+Pr(X_{ij} = 1 \mid i \leq k \leq j) = \frac{2}{j-i+1}
+\]
+
+\textbf{Case 3}: $i < j \leq k$. Similar logic to Case 1.
+\[
+Pr(X_{ij} = 1 \mid i < j \leq k) = \frac{2}{k-i+1}
+\]
+\clearpage
+\item[(b)]
+\begin{align*}
+\mathbb{E}[runtime \mid k \leq i<j] &= \sum_{i=k}^{n-1}\sum_{j=i+1}^n \frac{2}{j-k+1} \\
+&= 2\left((1)\frac{1}{2} + (2)\frac{1}{3} + \dots + (n-k)\frac{1}{n-k+1}\right) \\
+&= 2 \sum_{a=1}^{n-k} \frac{a}{a+1} < 2(n-k) \implies O(n)\\
+\mathbb{E}[runtime \mid i < k < j] &= \sum_{i=1}^{k-1}\sum_{j=k+1}^{n} \frac{2}{j-i+1} \\
+&= 2 \sum_{i=1}^{k-1} \left(\frac{1}{k-i+2}+\frac{1}{k-i+3}+\dots+\frac{1}{n-i+1}     \right) \\
+&\text{(know from lecture that $\frac{1}{2}+\dots+\frac{1}{n} < \ln n$)} \\
+&< 2 \sum_{i=1}^{k-1} \left( \ln(n-i+1) - ln(k-i+1)   \right) \\
+&= 2 \sum_{i=1}^{k-1} \ln\left( \frac{n-i+1}{k-i+1}   \right) \\
+&= 2 \ln\left(\frac{(n)(n-1)\dots(n-k+2)}{(k)(k-1)\dots(2)}    \right) \\
+&= 2 \ln\left(\frac{n!}{k!(n-k+1)!}\right) \\
+&< 2 \ln\binom{n}{k} \leq 2 ln 2^n \implies O(n) \\
+\mathbb{E}[runtime \mid i < j \leq k] &= \sum_{i=1}^{k-1}\sum_{j=i+1}^{k}\frac{2}{k-i+1} \\
+&= 2 \sum_{i=1}^{k-1} \frac{k-i}{k-i+1} < 2(k-1) \implies O(n)
+\end{align*}
+Therefore, the expected runtime is $O(n)$.
+\end{enumerate}
+\clearpage
+
+\section{Pairwise Independent Hashing}
+\begin{enumerate}
+\item[(a)] By the pigeonhole principle, if $\mathcal{H}$ has strictly less than $m^2$ functions, it is impossible to have at least one function correspond to each of the $m^2$ combinations of values. Therefore, the probability of picking any pair of values is not uniform, and $\mathcal{H}$ cannot be pairwise independent.
+
+\item[(b)] If $\mathcal{H}$ is pairwise independent, then the probability of a pair of values being any of the $m^2$ combinations is uniform. In other words, the probability of two values colliding is exactly $\frac{1}{m^2}$. Since there are $m$ ways to collide, the total probability of two values colliding is $\frac{1}{m}$, indicating that $\mathcal{H}$ is also universal.
+
+\item[(c)]
+\end{enumerate}
+
+\end{document}
+
+

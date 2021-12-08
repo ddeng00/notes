@@ -766,7 +766,96 @@ Given two problems $A$ and $B$. If $A$ reduces to $B$, $\exists$ efficient algor
 \end{itemize}
 
 \end{definition}
+\clearpage
 
+\section{Random Algorithm}
+\begin{definition}[Expectation] (Has properties of linearity)
+\[
+\mathbb{E}[X] = \sum_{k=-\infty}^\infty k Pr(X=k)
+\]
+If $X$ is non-negative, then also
+\[
+\mathbb{E}[X]=\sum_{k=1}^\infty Pr(X \geq k)
+\]
+\end{definition}
+
+\begin{definition}[Markov's Inequality]
+If $X$ is non-negative, then
+\[
+Pr(X>\lambda) < \frac{\mathbb{E}[X]}{\lambda}
+\]
+\end{definition}
+
+\subsection{Las Vegas}
+\begin{definition}[Las Vegas]
+Always correct. Runtime is a random variable that is small in expectation (e.g., guick sort).
+\end{definition}
+
+\begin{definition}[QuickSort] Randomly select a pivot point and recursively sort L and R. Define event $A_{ij} = $ $i$th smallest element had been compared to $j$th smallest element. Then
+\begin{align*}
+\mathbb{E}(runtime) \propto \sum_{i<j} \mathbb{E}[I_{A_{ij}}] &= \sum_{i<j} Pr(A_{ij}) \\
+&= \sum_{i<j} \frac{2}{j-i+1} \\
+&= \frac{1}{2}(n-1) + \frac{1}{3}(n-2)+\dots+\frac{1}{n}(1) \\
+&\leq n\left(\frac{1}{2}+\frac{1}{3}+\dots+1\right) \\
+&\leq n\ln n
+\end{align*}
+\end{definition}
+
+\subsection{Monte Carlo}
+\begin{definition}[Monte Carlo]
+Always efficient. Correctness is a random variable (e.g., polling).
+\end{definition}
+
+\begin{definition}[Freivalds' Algorithm]
+Algorithm for verifying matrix multiplication $C=AB$ is correct. Let $D=AB-C$, verify $Dx=0$.
+
+
+If $D\neq 0$,
+\begin{align*}
+{Pr}_{x\in [0,1]^n}(Dx=0)\leq \frac{1}{2} \\
+\implies Pr(incorrect) \leq \frac{1}{2^T}
+\end{align*}
+\end{definition}
+
+
+
+\begin{definition}[Karger's Contraction Algorithm]
+Used for solving the global min-cut problem. For weighted global min-cut, the problem can be reduced to $n-1$ calls to s-t cut. For unweighted global min-cut, Karger's algorithm performs $n-2$ random contractions and output the resulting cut.
+\begin{align*}
+Pr(\text{Karger returns min-cut}) \geq \frac{1}{\binom{n}{2}} \\
+\implies Pr(incorrect) \leq \left(1-\frac{1}{\binom{n}{2}}\right)^T \leq e^{-\frac{T}{\binom{n}{2}}}
+\end{align*}
+
+\begin{remark}
+No graph can have more than $\binom{n}{2}$ min-cuts.
+\end{remark}
+\end{definition}
+\clearpage
+
+\section{Hashing}
+\begin{definition}[Hashing]
+\[
+\mathbb{E}[\text{op time}] = O\left(T_h + \tfrac{n}{m}\right)
+\]
+\end{definition}
+
+\begin{definition}[K-wise independent hash families]
+A set $H$ of functions mapping $\{ 0,\dots, U-1 \}$ into $\{ 0,\dots, m-1 \}$ is k-wise independent if
+\[
+\forall x_1\neq x_2\neq\dots\neq x_u, \forall y_1\dots y_k, {Pr}_{h\in H}\left( (h(x_1)=y_1) \wedge \dots \wedge (h(x_u)=y_u)      \right) = \frac{1}{m^k}
+\]
+\end{definition}
+
+\begin{definition}[Universal hash families]
+A set $H$ is universal if
+\[
+\forall x_i \neq x_j, {Pr}_{h\in H} (h(x_i)=h(x_j)) = \frac{1}{m}
+\]
+\end{definition}
+
+\begin{remark}
+2-wise independent $\implies$ universal
+\end{remark}
 \end{document}
 
 
