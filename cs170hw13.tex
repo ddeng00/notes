@@ -106,8 +106,17 @@ Therefore, the expected runtime is $O(n)$.
 \item[(b)] If $\mathcal{H}$ is pairwise independent, then the probability of a pair of values being any of the $m^2$ combinations is uniform. In other words, the probability of two values colliding is exactly $\frac{1}{m^2}$. Since there are $m$ ways to collide, the total probability of two values colliding is $\frac{1}{m}$, indicating that $\mathcal{H}$ is also universal.
 
 \item[(c)]
-\end{enumerate}
+\begin{enumerate}
+\item[(i)]
+Yes. Take the example where $\mathcal{H}$ is an universal hash family that contains exacly 2 hash functions $h$ and $h'$ with domain $\{x_0, x_1, x_2\}$ and range $\{0,1\}$. Let the mapping for $h$ be $\{1,0,1\}$ and the mapping for $h'$ be $\{0,0,1\}$. In this case, if the friend gives me $x_0$, he/she will be able to tell which hash function I was using since the values for $x_0$ are unique for both. If I was using $h$, the friend would give $x_1$, which is guaranteed to collide; if I was using $h'$, the friend would give $x_2$ and that would guarantee to collide.
 
+\item[(ii)]
+No. Even though the friend knows $\mathcal{H}$, knowing any $h(x)$ only prunes the functions that does not have that $h(x)$ value as a mapping. Since all $m^2$ pairs are sampled uniformly, knowing one value in any pair will still leave behind $m$ funciton to be chosen from uniformly since $H$ is pairwise independent. Therefore, the probability of finding a collision is strictly $\frac{1}{m}$, and the friend will not be able to obtain a higher probability of collision no matter what variable he/she gives next.
+\end{enumerate}
+\end{enumerate}
+\clearpage
+
+\section{Two-level Hashing}
 \end{document}
 
 
