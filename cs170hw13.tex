@@ -30,7 +30,7 @@
 
 \section{Study Group}
 \begin{enumerate}
-\item[(a)] None
+\item[(a)] Auston, SID 3034554056
 \item[(b)] Yes
 \end{enumerate}
 \clearpage
@@ -91,7 +91,8 @@ Pr(X_{ij} = 1 \mid i < j \leq k) = \frac{2}{k-i+1}
 &= 2 \sum_{i=1}^{k-1} \ln\left( \frac{n-i+1}{k-i+1}   \right) \\
 &= 2 \ln\left(\frac{(n)(n-1)\dots(n-k+2)}{(k)(k-1)\dots(2)}    \right) \\
 &= 2 \ln\left(\frac{n!}{k!(n-k+1)!}\right) \\
-&< 2 \ln\binom{n}{k} \leq 2 ln 2^n \implies O(n) \\
+&< 2 \ln\binom{n}{k} \leq 2 \ln \binom{n}{\frac{n}{2}} \\
+&\leq 2 \ln \left(\frac{en}{\frac{n}{2}}\right)^{\frac{n}{2}} = n \ln (2e) \implies O(n) \\
 \mathbb{E}[runtime \mid i < j \leq k] &= \sum_{i=1}^{k-1}\sum_{j=i+1}^{k}\frac{2}{k-i+1} \\
 &= 2 \sum_{i=1}^{k-1} \frac{k-i}{k-i+1} < 2(k-1) \implies O(n)
 \end{align*}
@@ -117,6 +118,49 @@ No. Even though the friend knows $\mathcal{H}$, knowing any $h(x)$ only prunes t
 \clearpage
 
 \section{Two-level Hashing}
+\begin{enumerate}
+\item[(a)] Let
+\[
+X_i = \sum_{j=1}^n I_{i,x_j}
+\]
+where $I_{i, x_j}$ is the indicator R.V. for $h(x_j) = i$. Then,
+\begin{align*}
+X_i^2 &= \left(\sum_{j=1}^n I_{i,x_j}\right)^2 = \sum_{j=1}^n I_{i, x_j}^2 + 2 \sum_{j=1}^{n-1} \sum_{k=j+1}^n I_{i,x_j} I_{i, x_k} \\
+\implies \mathbb{E}[X_i^2] &= \sum_{j=1}^n \mathbb{E}[I_{i, x_j}^2] + 2 \sum_{j=1}^{n-1} \sum_{k=j+1}^n \mathbb{E}[I_{i,x_j} I_{i, x_k}] \\
+&= \sum_{j=1}^n Pr(I_{i,x_j}=1) + 2 \sum_{j=1}^{n-1} \sum_{k=j+1}^n Pr(I_{i,x_j}=1, I_{i, x_k}=1) \\
+&= \sum_{j=1}^n \frac{1}{m} + 2 \sum_{j=1}^{n-1} \sum_{k=j+1}^n \frac{1}{m^2} \qquad \text{(2-wise independent)} \\
+&= \frac{n}{m} + 2 \sum_{j=1}^{n-1} \frac{n-x}{m^2} = \frac{n}{m} + \frac{n(n-1)}{m^2} \\
+\implies \mathbb{E}\left[\sum_{i=0}^{m-1} X_i^2\right] &= \sum_{i=0}^{m-1} \mathbb{E}[X_i^2] = n + \frac{(n)(n-1)}{m}
+\end{align*}
+\clearpage
+
+\item[(b)]
+\textbf{Description:}\\
+\begin{enumerate}
+\item[1.] Construct a level-1 hash table $T_1$ of size $n$
+\item[2.] Randomly choose a hash function $h:[U]\to[n]$ from a 2-wise independent hash family and hash the $n$ inputs and store the hashed values in linked lists (size $X_i$) in the corresponding bucket $i$ of $T_1$.
+\item[3.] If $\sum_{i=1}^{n} X_i > 4n$, clear $T_1$ and repeat step 2. Otherwise, for each bucket $i$, construct a level-2 hash table $T_2^i$ of size $X_i^2$.
+\item[4.] For each bucket $i$, randomly choose a hash function $h_i : [U] \to [X_i]$ from an universal hash family and hash the values stored in the linked list. If any values collide, choose another hash function and repeat hashing.
+\end{enumerate}
+
+\textbf{Analysis:}\\
+\begin{itemize}
+\item \underline{Memory}: $T_1$ has size $n$, and all the $T_2^i$ tables combined have size $\sum_{i=0}^{n-1} X_i \leq 4n$. Overall, the 2-level data structure has memory complexity $O(n)$.
+
+\item \underline{Worst case query time}: At worst, a query needs to hash into $T_1$ and then into $T_2^i$ if there is collision. So there are at most 2 constant time hashing operations and 2 constant time access. Therefore, the worst case query time is $O(1)$.
+
+\item \underline{Expected preprocessing time}: Constructing $T_1$ takes $O(n)$. Using Markov's Inequality, we know that the probability of the size of the $T_2$ tables (which relates to the amount of collisions due to hashing with $h$) is at most $\frac{1}{2}$:
+\[
+Pr\left(\sum_{i=0}^{n-1} X_i^2 > 4n\right) < \frac{\mathbb{E}\left[\sum_{i=0}^{n-1} X_i^2\right]}{4n} = \frac{n+\frac{(n)(n-1)}{n}}{4n} = \frac{1}{2}-\frac{1}{4n} < \frac{1}{2}
+\]
+Therefore, the expected number of times we need to resample the level-1 hash function is $2$. Choosing each hash function is $O(1)$, evaluating all inputs is $O(n)$, and assigning all variables to linked lists is $O(n)$, for an expected constant number of times.
+
+After that, creating the level-2 hash tables take $O(n)$ since their total size is proportional to $n$. From lecture and from the inverse birthday paradox, we know that the probability of picking a perfect hashing function for each level-2 hash table is $\frac{1}{2}$ given the size of $X_i^2$ with respect to the input size of $X_i$, which means that the hash functions for each sub-table also has an expected number of times to be sampled to be $2$. Evaluating $n$ inputs for an expected constant number of times is $O(n)$.
+
+Therefore, the overall expected preprocessing time is $O(n)$.
+\end{itemize}
+\end{enumerate}
+
 \end{document}
 
 
